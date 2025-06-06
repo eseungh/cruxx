@@ -51,13 +51,18 @@ public struct RecordingView: View {
         .onAppear {
             viewModel.cameraService.startCamera { success in
                 if !success {
-                    print("카메라 권한이 필요합니다.")
+                    viewModel.alertMessage = "카메라 권한이 필요합니다. 설정에서 권한을 확인하세요."
                 }
             }
         }
         .onDisappear {
             viewModel.cameraService.stopCamera()
         }
+        .alert(isPresented: .constant(viewModel.alertMessage != nil), content: {
+            Alert(title: Text("오류"), message: Text(viewModel.alertMessage ?? ""), dismissButton: .default(Text("확인")) {
+                viewModel.alertMessage = nil
+            })
+        })
     }
 
     private var buttonTitle: String {
@@ -72,3 +77,11 @@ public struct RecordingView: View {
         }
     }
 }
+
+#if DEBUG
+struct RecordingView_Previews: PreviewProvider {
+    static var previews: some View {
+        RecordingView()
+    }
+}
+#endif

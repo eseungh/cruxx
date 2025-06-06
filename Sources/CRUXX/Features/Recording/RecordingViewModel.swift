@@ -11,6 +11,7 @@ public enum RecordingState {
 /// 녹화 화면 상태와 이벤트를 처리하는 뷰모델입니다.
 public final class RecordingViewModel: ObservableObject {
     @Published public private(set) var state: RecordingState = .idle
+    @Published public var alertMessage: String?
 
     public let cameraService: CameraServiceProtocol
     private let sessionManager: SessionManagerProtocol
@@ -35,7 +36,12 @@ public final class RecordingViewModel: ObservableObject {
         cameraService.startRecording { [weak self] success in
             guard let self = self else { return }
             DispatchQueue.main.async {
-                self.state = success ? .recording : .idle
+                if success {
+                    self.state = .recording
+                } else {
+                    self.alertMessage = "녹화를 시작할 수 없습니다."
+                    self.state = .idle
+                }
             }
         }
     }
@@ -46,7 +52,10 @@ public final class RecordingViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.state = .stopped
             }
-            guard let url = url else { return }
+            guard let url = url else {
+                self.alertMessage = "영상 저장에 실패했습니다."
+                return
+            }
             let fileName = url.lastPathComponent
             let session = ClimbingSession(fileName: fileName, fileURL: url)
             self.sessionManager.saveSession(session)

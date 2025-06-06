@@ -10,6 +10,10 @@ public struct SessionListView: View {
     public var body: some View {
         NavigationView {
             List {
+                if viewModel.sessions.isEmpty {
+                    Text("세션 없음")
+                        .foregroundColor(.secondary)
+                }
                 ForEach(viewModel.sessions) { session in
                     NavigationLink(destination: VideoPlayer(player: AVPlayer(url: session.fileURL))) {
                         HStack {
@@ -35,3 +39,11 @@ public struct SessionListView: View {
         return df
     }
 }
+
+#if DEBUG
+struct SessionListView_Previews: PreviewProvider {
+    static var previews: some View {
+        SessionListView()
+    }
+}
+#endif
