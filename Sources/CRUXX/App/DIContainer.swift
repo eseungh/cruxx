@@ -1,1 +1,13 @@
-// 전역 의존성 관리용 DIContainer 구현 파일
+import Foundation
+
+/// 앱 전역에서 사용되는 서비스 인스턴스를 보관합니다.
+public final class DIContainer: ObservableObject {
+    public let sessionManager: SessionManagerProtocol
+    public let cameraService: CameraServiceProtocol
+
+    public init(sessionManager: SessionManagerProtocol = SessionManager(),
+                cameraService: CameraServiceProtocol = CameraService()) {
+        self.sessionManager = sessionManager
+        self.cameraService = cameraService
+    }
+}
