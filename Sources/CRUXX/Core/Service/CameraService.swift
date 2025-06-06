@@ -30,18 +30,25 @@ public final class CameraService: NSObject, CameraServiceProtocol {
     }
 
     public func startCamera(completion: @escaping (Bool) -> Void) {
+        print("카메라 시작 요청")
         checkPermission { [weak self] granted in
             guard let self = self else { return }
-            guard granted else { completion(false); return }
+            guard granted else {
+                print("카메라 권한 거부")
+                completion(false)
+                return
+            }
             self.sessionQueue.async {
                 self.configureSession()
                 self.session.startRunning()
+                print("카메라 세션 시작")
                 DispatchQueue.main.async { completion(true) }
             }
         }
     }
 
     public func stopCamera() {
+        print("카메라 세션 중지")
         sessionQueue.async { [weak self] in
             self?.session.stopRunning()
         }
@@ -53,16 +60,23 @@ public final class CameraService: NSObject, CameraServiceProtocol {
     }
 
     public func startRecording(completion: @escaping (Bool) -> Void) {
+        print("녹화 시작 요청")
         sessionQueue.async { [weak self] in
             guard let self = self else { return }
-            guard !self.movieOutput.isRecording else { DispatchQueue.main.async { completion(false) }; return }
+            guard !self.movieOutput.isRecording else {
+                print("이미 녹화 중")
+                DispatchQueue.main.async { completion(false) }
+                return
+            }
             let url = self.videoWriter.startWriting()
             self.movieOutput.startRecording(to: url, recordingDelegate: self)
+            print("녹화 시작")
             DispatchQueue.main.async { completion(true) }
         }
     }
 
     public func stopRecording(completion: @escaping (URL?) -> Void) {
+        print("녹화 중지 요청")
         sessionQueue.async { [weak self] in
             guard let self = self else { return }
             self.recordingCompletion = completion
@@ -102,17 +116,26 @@ private extension CameraService {
         if session.canAddOutput(movieOutput) {
             session.addOutput(movieOutput)
         }
+
+        print("카메라 세션 구성 완료")
     }
 
     func checkPermission(completion: @escaping (Bool) -> Void) {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
+            print("카메라 권한 허용")
             completion(true)
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
+                if granted {
+                    print("카메라 권한 획득")
+                } else {
+                    print("카메라 권한 거부됨")
+                }
                 completion(granted)
             }
         default:
+            print("카메라 사용 불가 상태")
             completion(false)
         }
     }
@@ -126,6 +149,7 @@ extension CameraService: AVCaptureFileOutputRecordingDelegate {
             DispatchQueue.main.async { [weak self] in self?.recordingCompletion?(nil) }
         } else {
             videoWriter.finishWriting { _ in }
+            print("녹화 파일 저장 완료: \(outputFileURL.lastPathComponent)")
             DispatchQueue.main.async { [weak self] in self?.recordingCompletion?(outputFileURL) }
         }
         recordingCompletion = nil
