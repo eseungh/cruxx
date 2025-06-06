@@ -1,5 +1,5 @@
 import XCTest
-@testable import CRUXX
+@testable import cruxx
 
 final class SettingsViewModelTests: XCTestCase {
     func testTogglePersistence() {

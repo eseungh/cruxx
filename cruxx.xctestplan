@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "BA0ED9AB-FB79-4A22-B898-79529FA040C6",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:cruxx.xcodeproj",
+      "identifier" : "31A5C34C2DF2E59B00C971A9",
+      "name" : "cruxx"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:cruxx.xcodeproj",
+        "identifier" : "31DBE3A12DF33CB900307E12",
+        "name" : "cruxxTests"
+      }
+    }
+  ],
+  "version" : 1
+}
