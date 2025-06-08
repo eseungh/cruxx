@@ -25,29 +25,34 @@ public struct RecordingView: View {
     public init() {}
 
     public var body: some View {
-        VStack(spacing: 16) {
+        ZStack {
+            // 프리뷰 레이어를 화면 전체에 표시합니다.
             CameraPreviewView(previewLayer: viewModel.cameraService.previewLayer)
-                .frame(maxWidth: .infinity, maxHeight: 300)
-                .background(Color.black)
+                .ignoresSafeArea()
 
-            Text(stateText)
-                .foregroundColor(.white)
-                .padding(8)
-                .background(Color.gray.opacity(0.7))
-                .cornerRadius(8)
+            VStack {
+                Spacer()
+                VStack(spacing: 16) {
+                    Text(stateText)
+                        .foregroundColor(.white)
+                        .padding(8)
+                        .background(Color.gray.opacity(0.7))
+                        .cornerRadius(8)
 
-            Button(action: {
-                viewModel.toggleRecording()
-            }) {
-                Text(buttonTitle)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+                    Button(action: {
+                        viewModel.toggleRecording()
+                    }) {
+                        Text(buttonTitle)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
+                }
+                .padding()
             }
         }
-        .padding()
         .onAppear {
             viewModel.cameraService.startCamera { success in
                 if !success {
