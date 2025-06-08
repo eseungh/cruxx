@@ -72,14 +72,22 @@ public final class CameraService: NSObject, CameraServiceProtocol {
             let url = self.videoWriter.startWriting()
             self.currentOutputURL = url
             if let connection = self.movieOutput.connection(with: .video) {
-                let orientation = self.previewLayer.connection?.videoOrientation ?? .portrait
+                let deviceOrientation = UIDevice.current.orientation
                 if #available(iOS 17.0, *) {
-                    let angle = Self.rotationAngle(for: orientation)
+                    let angle = Self.rotationAngle(for: deviceOrientation)
                     if connection.isVideoRotationAngleSupported(angle) {
                         connection.videoRotationAngle = angle
                     }
-                } else if connection.isVideoOrientationSupported {
-                    connection.videoOrientation = orientation
+                    if let previewConnection = self.previewLayer.connection,
+                       previewConnection.isVideoRotationAngleSupported(angle) {
+                        previewConnection.videoRotationAngle = angle
+                    }
+                } else {
+                    let orientation = Self.videoOrientation(from: deviceOrientation)
+                    if connection.isVideoOrientationSupported {
+                        connection.videoOrientation = orientation
+                    }
+                    self.previewLayer.connection?.videoOrientation = orientation
                 }
             }
             self.movieOutput.startRecording(to: url, recordingDelegate: self)
@@ -153,13 +161,24 @@ private extension CameraService {
         }
     }
 
-    static func rotationAngle(for orientation: AVCaptureVideoOrientation) -> Double {
+    @available(iOS, introduced: 13.0, deprecated: 17.0)
+    static func videoOrientation(from orientation: UIDeviceOrientation) -> AVCaptureVideoOrientation {
+        switch orientation {
+        case .portrait: return .portrait
+        case .portraitUpsideDown: return .portraitUpsideDown
+        case .landscapeLeft: return .landscapeRight
+        case .landscapeRight: return .landscapeLeft
+        default: return .portrait
+        }
+    }
+
+    static func rotationAngle(for orientation: UIDeviceOrientation) -> Double {
         switch orientation {
         case .portrait: return 0
         case .landscapeRight: return 90
         case .portraitUpsideDown: return 180
         case .landscapeLeft: return 270
-        @unknown default: return 0
+        default: return 0
         }
     }
 }
