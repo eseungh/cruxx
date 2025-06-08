@@ -42,6 +42,17 @@ public final class CameraService: NSObject, CameraServiceProtocol {
             self.sessionQueue.async {
                 self.configureSession()
                 self.session.startRunning()
+                if let connection = self.previewLayer.connection {
+                    if #available(iOS 17.0, *) {
+                        if connection.isVideoRotationAngleSupported(0) {
+                            connection.videoRotationAngle = 0
+                        }
+                    } else {
+                        if connection.isVideoOrientationSupported {
+                            connection.videoOrientation = .portrait
+                        }
+                    }
+                }
                 print("카메라 세션 시작")
                 DispatchQueue.main.async { completion(true) }
             }
@@ -72,22 +83,19 @@ public final class CameraService: NSObject, CameraServiceProtocol {
             let url = self.videoWriter.startWriting()
             self.currentOutputURL = url
             if let connection = self.movieOutput.connection(with: .video) {
-                let deviceOrientation = UIDevice.current.orientation
                 if #available(iOS 17.0, *) {
-                    let angle = Self.rotationAngle(for: deviceOrientation)
-                    if connection.isVideoRotationAngleSupported(angle) {
-                        connection.videoRotationAngle = angle
+                    if connection.isVideoRotationAngleSupported(0) {
+                        connection.videoRotationAngle = 0
                     }
                     if let previewConnection = self.previewLayer.connection,
-                       previewConnection.isVideoRotationAngleSupported(angle) {
-                        previewConnection.videoRotationAngle = angle
+                       previewConnection.isVideoRotationAngleSupported(0) {
+                        previewConnection.videoRotationAngle = 0
                     }
                 } else {
-                    let orientation = Self.videoOrientation(from: deviceOrientation)
                     if connection.isVideoOrientationSupported {
-                        connection.videoOrientation = orientation
+                        connection.videoOrientation = .portrait
                     }
-                    self.previewLayer.connection?.videoOrientation = orientation
+                    self.previewLayer.connection?.videoOrientation = .portrait
                 }
             }
             self.movieOutput.startRecording(to: url, recordingDelegate: self)
