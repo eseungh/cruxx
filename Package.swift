@@ -8,11 +8,13 @@ let package = Package(
     targets: [
         .target(
             name: "cruxx",
-            dependencies: []
+            dependencies: [],
+            path: "Sources/CRUXX"
         ),
         .testTarget(
             name: "cruxxTests",
-            dependencies: ["CRUXX"]
+            dependencies: ["cruxx"],
+            path: "Tests/CRUXXTests"
         )
     ]
 )
