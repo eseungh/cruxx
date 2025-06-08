@@ -21,6 +21,7 @@ public final class CameraService: NSObject, CameraServiceProtocol {
     private let movieOutput = AVCaptureMovieFileOutput()
     private let videoWriter: VideoWriterProtocol
     private var recordingCompletion: ((URL?) -> Void)?
+    private var currentOutputURL: URL?
     private let sessionQueue = DispatchQueue(label: "CameraService.Session")
 
     public init(writer: VideoWriterProtocol = VideoWriter()) {
@@ -69,6 +70,11 @@ public final class CameraService: NSObject, CameraServiceProtocol {
                 return
             }
             let url = self.videoWriter.startWriting()
+            self.currentOutputURL = url
+            if let connection = self.movieOutput.connection(with: .video),
+               connection.isVideoOrientationSupported {
+                connection.videoOrientation = self.previewLayer.connection?.videoOrientation ?? .portrait
+            }
             self.movieOutput.startRecording(to: url, recordingDelegate: self)
             print("녹화 시작")
             DispatchQueue.main.async { completion(true) }
@@ -144,15 +150,16 @@ private extension CameraService {
 // MARK: - AVCaptureFileOutputRecordingDelegate
 extension CameraService: AVCaptureFileOutputRecordingDelegate {
     public func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+        videoWriter.finishWriting { _ in }
         if let error = error {
             print("녹화 중 오류 발생: \(error)")
             DispatchQueue.main.async { [weak self] in self?.recordingCompletion?(nil) }
         } else {
-            videoWriter.finishWriting { _ in }
             print("녹화 파일 저장 완료: \(outputFileURL.lastPathComponent)")
             DispatchQueue.main.async { [weak self] in self?.recordingCompletion?(outputFileURL) }
         }
         recordingCompletion = nil
+        currentOutputURL = nil
     }
 }
 
