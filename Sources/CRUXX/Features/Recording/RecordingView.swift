@@ -5,16 +5,37 @@ import AVFoundation
 struct CameraPreviewView: UIViewRepresentable {
     let previewLayer: AVCaptureVideoPreviewLayer
 
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        previewLayer.videoGravity = .resizeAspectFill
-        previewLayer.frame = view.bounds
-        view.layer.addSublayer(previewLayer)
-        return view
+    func makeUIView(context: Context) -> PreviewContainerView {
+        PreviewContainerView(previewLayer: previewLayer)
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        previewLayer.frame = uiView.bounds
+    func updateUIView(_ uiView: PreviewContainerView, context: Context) {
+        uiView.updateFrame()
+    }
+
+    /// 프리뷰 레이어의 프레임을 항상 뷰 크기에 맞춰 조정하는 컨테이너입니다.
+    final class PreviewContainerView: UIView {
+        private let previewLayer: AVCaptureVideoPreviewLayer
+
+        init(previewLayer: AVCaptureVideoPreviewLayer) {
+            self.previewLayer = previewLayer
+            super.init(frame: .zero)
+            previewLayer.videoGravity = .resizeAspectFill
+            layer.addSublayer(previewLayer)
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            updateFrame()
+        }
+
+        func updateFrame() {
+            previewLayer.frame = bounds
+        }
     }
 }
 
