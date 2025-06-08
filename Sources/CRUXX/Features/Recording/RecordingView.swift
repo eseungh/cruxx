@@ -45,7 +45,7 @@ public struct RecordingView: View {
                         Text(buttonTitle)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
+                            .background(Color.black)
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
