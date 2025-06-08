@@ -5,6 +5,12 @@ import PackageDescription
 
 let package = Package(
     name: "cruxx",
+    platforms: [
+        .iOS(.v16)
+    ],
+    products: [
+        .library(name: "cruxx", targets: ["cruxx"])
+    ],
     targets: [
         .target(
             name: "cruxx",
