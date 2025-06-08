@@ -71,9 +71,16 @@ public final class CameraService: NSObject, CameraServiceProtocol {
             }
             let url = self.videoWriter.startWriting()
             self.currentOutputURL = url
-            if let connection = self.movieOutput.connection(with: .video),
-               connection.isVideoOrientationSupported {
-                connection.videoOrientation = self.previewLayer.connection?.videoOrientation ?? .portrait
+            if let connection = self.movieOutput.connection(with: .video) {
+                let orientation = self.previewLayer.connection?.videoOrientation ?? .portrait
+                if #available(iOS 17.0, *) {
+                    let angle = Self.rotationAngle(for: orientation)
+                    if connection.isVideoRotationAngleSupported(angle) {
+                        connection.videoRotationAngle = angle
+                    }
+                } else if connection.isVideoOrientationSupported {
+                    connection.videoOrientation = orientation
+                }
             }
             self.movieOutput.startRecording(to: url, recordingDelegate: self)
             print("녹화 시작")
@@ -143,6 +150,16 @@ private extension CameraService {
         default:
             print("카메라 사용 불가 상태")
             completion(false)
+        }
+    }
+
+    static func rotationAngle(for orientation: AVCaptureVideoOrientation) -> Double {
+        switch orientation {
+        case .portrait: return 0
+        case .landscapeRight: return 90
+        case .portraitUpsideDown: return 180
+        case .landscapeLeft: return 270
+        @unknown default: return 0
         }
     }
 }
