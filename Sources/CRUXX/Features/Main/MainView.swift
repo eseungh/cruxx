@@ -44,6 +44,7 @@ public struct MainView: View {
             .navigationTitle("대시보드")
             .onAppear { viewModel.loadDashboard() }
         }
+        .glassNavigationBar()
     }
 }
 
