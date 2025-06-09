@@ -10,6 +10,7 @@ public enum RecordingState {
 }
 
 /// 녹화 화면 상태와 이벤트를 처리하는 뷰모델입니다.
+@MainActor
 public final class RecordingViewModel: ObservableObject {
     @Published public private(set) var state: RecordingState = .idle
     @Published public var alertMessage: String?
@@ -38,14 +39,16 @@ public final class RecordingViewModel: ObservableObject {
         print("startRecording 호출")
         cameraService.startRecording { [weak self] success in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                if success {
-                    self.state = .recording
-                    print("녹화 시작됨")
-                } else {
-                    self.alertMessage = "녹화를 시작할 수 없습니다."
-                    self.state = .idle
-                    print("녹화 시작 실패")
+            Task {
+                await MainActor.run {
+                    if success {
+                        self.state = .recording
+                        print("녹화 시작됨")
+                    } else {
+                        self.alertMessage = "녹화를 시작할 수 없습니다."
+                        self.state = .idle
+                        print("녹화 시작 실패")
+                    }
                 }
             }
         }
@@ -55,19 +58,21 @@ public final class RecordingViewModel: ObservableObject {
         print("stopRecording 호출")
         cameraService.stopRecording { [weak self] url in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.state = .stopped
-                print("녹화 중지 완료")
+            Task {
+                await MainActor.run {
+                    self.state = .stopped
+                    print("녹화 중지 완료")
+                }
+                guard let url = url else {
+                    await MainActor.run { self.alertMessage = "영상 저장에 실패했습니다." }
+                    print("저장 실패")
+                    return
+                }
+                print("저장된 파일명: \(url.lastPathComponent)")
+                let fileName = url.lastPathComponent
+                let session = ClimbingSession(fileName: fileName, fileURL: url)
+                self.sessionManager.saveSession(session)
             }
-            guard let url = url else {
-                self.alertMessage = "영상 저장에 실패했습니다."
-                print("저장 실패")
-                return
-            }
-            print("저장된 파일명: \(url.lastPathComponent)")
-            let fileName = url.lastPathComponent
-            let session = ClimbingSession(fileName: fileName, fileURL: url)
-            self.sessionManager.saveSession(session)
         }
     }
 }
