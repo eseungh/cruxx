@@ -42,9 +42,12 @@ struct CameraPreviewView: UIViewRepresentable {
 
 /// 영상 녹화 및 프리뷰 화면입니다.
 public struct RecordingView: View {
-    @StateObject private var viewModel = RecordingViewModel()
+    @StateObject private var viewModel: RecordingViewModel
 
-    public init() {}
+    public init(container: DIContainer) {
+        _viewModel = StateObject(wrappedValue: RecordingViewModel(cameraService: container.cameraService,
+                                                                  sessionManager: container.sessionManager))
+    }
 
     public var body: some View {
         ZStack {
@@ -108,7 +111,7 @@ public struct RecordingView: View {
 #if DEBUG
 struct RecordingView_Previews: PreviewProvider {
     static var previews: some View {
-        RecordingView()
+        RecordingView(container: DIContainer())
     }
 }
 #endif
