@@ -17,6 +17,8 @@ public final class VideoWriter: NSObject, VideoWriterProtocol {
     private var videoInput: AVAssetWriterInput?
     private var audioInput: AVAssetWriterInput?
     private var outputURL: URL?
+    /// 세션 시작 여부를 추적하기 위한 플래그입니다.
+    private var sessionStarted: Bool = false
 
     /// 기록을 시작하고 저장될 임시 파일 경로를 반환합니다.
     public func startWriting() -> URL {
@@ -27,6 +29,7 @@ public final class VideoWriter: NSObject, VideoWriterProtocol {
             assetWriter = try AVAssetWriter(outputURL: url, fileType: .mov)
             setupInputs()
             assetWriter?.startWriting()
+            sessionStarted = false
         } catch {
             print("AssetWriter 초기화 실패: \(error)")
         }
@@ -39,8 +42,10 @@ public final class VideoWriter: NSObject, VideoWriterProtocol {
         let isVideo = sampleBuffer.formatDescription
             .map { CMFormatDescriptionGetMediaType($0) == kCMMediaType_Video } ?? false
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-        if writer.status == .unknown {
+        // 첫 프레임 처리 시 세션을 시작합니다.
+        if !sessionStarted {
             writer.startSession(atSourceTime: timestamp)
+            sessionStarted = true
         }
         if isVideo {
             if let input = videoInput, input.isReadyForMoreMediaData {
@@ -99,5 +104,6 @@ public final class VideoWriter: NSObject, VideoWriterProtocol {
         videoInput = nil
         audioInput = nil
         outputURL = nil
+        sessionStarted = false
     }
 }
