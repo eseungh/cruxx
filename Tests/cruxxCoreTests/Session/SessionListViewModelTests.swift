@@ -3,7 +3,7 @@ import XCTest
 
 final class SessionListViewModelTests: XCTestCase {
     /// 삭제 기능 동작 시 세션이 제거되는지 확인합니다.
-    func test삭제후세션리스트갱신() {
+    func testDeleteUpdatesSessionList() {
         let repo = MockSessionRepository()
         let manager = SessionManager(repository: repo)
         let session = ClimbingSession(fileName: "a.mov", fileURL: URL(fileURLWithPath: "a.mov"))
