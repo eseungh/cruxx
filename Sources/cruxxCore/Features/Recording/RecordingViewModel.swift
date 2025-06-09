@@ -71,7 +71,7 @@ public final class RecordingViewModel: ObservableObject {
                 print("저장된 파일명: \(url.lastPathComponent)")
                 let fileName = url.lastPathComponent
                 let session = ClimbingSession(fileName: fileName, fileURL: url)
-                self.sessionManager.saveSession(session)
+                await self.sessionManager.saveSession(session)
             }
         }
     }
