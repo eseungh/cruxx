@@ -3,7 +3,7 @@ import XCTest
 
 final class MainViewModelTests: XCTestCase {
     /// 최근 세션이 3개까지 정렬되어 로드되는지 확인합니다.
-    func test대시보드로드시최근3개세션정렬() {
+    func testDashboardLoadsSortedRecentSessions() {
         let repo = MockSessionRepository()
         let manager = SessionManager(repository: repo)
         let now = Date()
