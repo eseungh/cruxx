@@ -16,10 +16,10 @@ public final class RecordingViewModel: ObservableObject {
     public let cameraService: CameraServiceProtocol
     private let sessionManager: SessionManagerProtocol
 
-    public init(cameraService: CameraServiceProtocol = CameraService(),
+    public init(cameraService: CameraServiceProtocol? = nil,
                 sessionManager: SessionManagerProtocol = SessionManager()) {
-        self.cameraService = cameraService
         self.sessionManager = sessionManager
+        self.cameraService = cameraService ?? CameraService(sessionManager: sessionManager)
     }
 
     /// 녹화 시작 또는 중지를 토글합니다.
