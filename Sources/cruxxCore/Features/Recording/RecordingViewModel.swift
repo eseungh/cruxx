@@ -56,7 +56,7 @@ public final class RecordingViewModel: ObservableObject {
 
     private func stopRecording() {
         print("stopRecording 호출")
-        cameraService.stopRecording { [weak self] url in
+        cameraService.stopRecording { [weak self] (url: URL?) -> Void in
             guard let self = self else { return }
             Task {
                 await MainActor.run {
