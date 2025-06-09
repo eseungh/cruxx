@@ -82,12 +82,12 @@ public final class CameraService: NSObject, CameraServiceProtocol {
         }
     }
 
-    public func stopRecording(completion: @escaping (URL?) -> Void) {
+    public func stopRecording(completion: @Sendable @escaping (URL?) -> Void) {
         print("녹화 중지 요청")
         sessionQueue.async { [weak self] in
             guard let self = self else { return }
             self.isRecording = false
-            self.videoWriter.finishWriting { [weak self] url in
+            self.videoWriter.finishWriting { [weak self] (url: URL?) -> Void in
                 guard let self = self else { return }
                 DispatchQueue.main.async {
                     completion(url)

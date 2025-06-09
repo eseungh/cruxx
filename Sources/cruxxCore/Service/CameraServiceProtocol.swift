@@ -8,5 +8,5 @@ public protocol CameraServiceProtocol {
     func stopCamera()
     func capturePhoto(completion: @escaping (Data?) -> Void)
     func startRecording(completion: @escaping (Bool) -> Void)
-    func stopRecording(completion: @escaping (URL?) -> Void)
+    func stopRecording(completion: @Sendable @escaping (URL?) -> Void)
 }

@@ -39,7 +39,7 @@ final class MockCameraService: CameraServiceProtocol {
         didStartRecording = true
         completion(true)
     }
-    func stopRecording(completion: @escaping (URL?) -> Void) {
+    func stopRecording(completion: @Sendable @escaping (URL?) -> Void) {
         didStopRecording = true
         completion(recordingURL)
     }

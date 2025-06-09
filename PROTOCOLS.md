@@ -29,7 +29,7 @@ protocol SessionManagerProtocol { func fetchSessions() -> [ClimbingSession] // �
 
 **2. 영상 녹화/카메라 제어**
 
-protocol CameraServiceProtocol { func startCamera(completion: @escaping (Bool) -> Void) // 카메라 시작 func stopCamera() // 카메라 종료 func capturePhoto(completion: @escaping (Data?) -> Void) // 사진 데이터 캡처 func startRecording(completion: @escaping (Bool) -> Void) // 영상 녹화 시작 func stopRecording(completion: @escaping (URL?) -> Void) // 영상 녹화 종료, 파일 URL 반환 }
+protocol CameraServiceProtocol { func startCamera(completion: @escaping (Bool) -> Void) // 카메라 시작 func stopCamera() // 카메라 종료 func capturePhoto(completion: @escaping (Data?) -> Void) // 사진 데이터 캡처 func startRecording(completion: @escaping (Bool) -> Void) // 영상 녹화 시작 func stopRecording(completion: @Sendable @escaping (URL?) -> Void) // 영상 녹화 종료, 파일 URL 반환 }
 
 ---
 
