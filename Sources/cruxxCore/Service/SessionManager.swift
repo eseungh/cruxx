@@ -2,6 +2,7 @@ import Foundation
 import cruxxModel
 
 /// 세션 매니저 프로토콜입니다.
+@MainActor
 public protocol SessionManagerProtocol {
     func fetchSessions() -> [ClimbingSession]
     func saveSession(_ session: ClimbingSession)
@@ -11,6 +12,7 @@ public protocol SessionManagerProtocol {
 }
 
 /// 세션 저장과 로딩을 담당하는 매니저 구현체입니다.
+@MainActor
 public final class SessionManager: SessionManagerProtocol {
     private let repository: SessionRepositoryProtocol
 
