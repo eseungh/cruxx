@@ -6,9 +6,11 @@ import cruxxModel
 
 /// 저장된 세션을 리스트로 보여주는 화면입니다.
 public struct SessionListView: View {
-    @StateObject private var viewModel = SessionListViewModel()
+    @StateObject private var viewModel: SessionListViewModel
 
-    public init() {}
+    public init(container: DIContainer) {
+        _viewModel = StateObject(wrappedValue: SessionListViewModel(sessionManager: container.sessionManager))
+    }
 
     public var body: some View {
         NavigationView {
@@ -47,7 +49,7 @@ public struct SessionListView: View {
 #if DEBUG
 struct SessionListView_Previews: PreviewProvider {
     static var previews: some View {
-        SessionListView()
+        SessionListView(container: DIContainer())
     }
 }
 #endif

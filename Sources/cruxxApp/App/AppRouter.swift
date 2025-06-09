@@ -9,7 +9,7 @@ public struct AppRouter: View {
 
     public var body: some View {
         TabView {
-            MainView()
+            MainView(container: container)
                 .tabItem {
                     Label("홈", systemImage: "house.fill")
                 }
@@ -19,7 +19,7 @@ public struct AppRouter: View {
                     Label("녹화", systemImage: "video.circle")
                 }
 
-            SessionListView()
+            SessionListView(container: container)
                 .tabItem {
                     Label("세션", systemImage: "list.bullet")
                 }
