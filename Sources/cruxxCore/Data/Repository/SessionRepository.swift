@@ -1,4 +1,5 @@
 import Foundation
+import cruxxModel
 
 /// 세션 저장소 프로토콜입니다.
 public protocol SessionRepositoryProtocol {

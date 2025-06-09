@@ -1,4 +1,5 @@
 import Foundation
+import cruxxModel
 
 /// 메인 화면에서 필요한 데이터를 관리합니다.
 public final class MainViewModel: ObservableObject {
