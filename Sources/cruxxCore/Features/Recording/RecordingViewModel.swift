@@ -41,16 +41,14 @@ public final class RecordingViewModel: ObservableObject {
         print("startRecording 호출")
         cameraService.startRecording { [weak self] success in
             guard let self = self else { return }
-            Task {
-                await MainActor.run {
-                    if success {
-                        self.state = .recording
-                        print("녹화 시작됨")
-                    } else {
-                        self.alertMessage = "녹화를 시작할 수 없습니다."
-                        self.state = .idle
-                        print("녹화 시작 실패")
-                    }
+            Task { @MainActor in
+                if success {
+                    self.state = .recording
+                    print("녹화 시작됨")
+                } else {
+                    self.alertMessage = "녹화를 시작할 수 없습니다."
+                    self.state = .idle
+                    print("녹화 시작 실패")
                 }
             }
         }
@@ -60,13 +58,11 @@ public final class RecordingViewModel: ObservableObject {
         print("stopRecording 호출")
         cameraService.stopRecording { [weak self] (url: URL?) -> Void in
             guard let self = self else { return }
-            Task {
-                await MainActor.run {
-                    self.state = .stopped
-                    print("녹화 중지 완료")
-                }
+            Task { @MainActor in
+                self.state = .stopped
+                print("녹화 중지 완료")
                 guard let url = url else {
-                    await MainActor.run { self.alertMessage = "영상 저장에 실패했습니다." }
+                    self.alertMessage = "영상 저장에 실패했습니다."
                     print("저장 실패")
                     return
                 }
