@@ -2,12 +2,13 @@ import Foundation
 import cruxxModel
 
 /// 세션 리스트 데이터를 관리하는 뷰모델입니다.
+@MainActor
 public final class SessionListViewModel: ObservableObject {
     @Published public private(set) var sessions: [ClimbingSession] = []
 
     private let sessionManager: SessionManagerProtocol
 
-    public init(sessionManager: SessionManagerProtocol = SessionManager()) {
+    public init(sessionManager: SessionManagerProtocol) {
         self.sessionManager = sessionManager
         loadSessions()
     }

@@ -5,9 +5,11 @@ import cruxxModel
 
 /// 최근 세션 요약과 간단한 통계를 보여주는 메인 화면입니다.
 public struct MainView: View {
-    @StateObject private var viewModel = MainViewModel()
+    @StateObject private var viewModel: MainViewModel
 
-    public init() {}
+    public init(container: DIContainer) {
+        _viewModel = StateObject(wrappedValue: MainViewModel(sessionManager: container.sessionManager))
+    }
 
     public var body: some View {
         NavigationView {
@@ -55,7 +57,7 @@ public struct MainView: View {
 #if DEBUG
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        MainView(container: DIContainer())
     }
 }
 #endif

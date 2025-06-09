@@ -2,13 +2,14 @@ import Foundation
 import cruxxModel
 
 /// 메인 화면에서 필요한 데이터를 관리합니다.
+@MainActor
 public final class MainViewModel: ObservableObject {
     @Published public private(set) var recentSessions: [ClimbingSession] = []
     @Published public private(set) var totalCount: Int = 0
 
     private let sessionManager: SessionManagerProtocol
 
-    public init(sessionManager: SessionManagerProtocol = SessionManager()) {
+    public init(sessionManager: SessionManagerProtocol) {
         self.sessionManager = sessionManager
     }
 
