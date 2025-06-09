@@ -17,6 +17,8 @@ public final class RecordingViewModel: ObservableObject {
 
     public let cameraService: CameraServiceProtocol
     private let sessionManager: SessionManagerProtocol
+    // TODO: CameraService와 VideoWriter 호출이 메인 스레드에서 안전한지 검토하고,
+    //       필요하다면 별도 actor 또는 서비스로 분리합니다.
 
     public init(cameraService: CameraServiceProtocol,
                 sessionManager: SessionManagerProtocol) {
