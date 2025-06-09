@@ -18,13 +18,14 @@ public final class CameraService: NSObject, CameraServiceProtocol {
 
     private let session = AVCaptureSession()
     private let photoOutput = AVCapturePhotoOutput()
-    private let movieOutput = AVCaptureMovieFileOutput()
+    private let videoOutput = AVCaptureVideoDataOutput()
+    private let audioOutput = AVCaptureAudioDataOutput()
     private let videoWriter: VideoWriterProtocol
     private let sessionManager: SessionManagerProtocol
-    private var recordingCompletion: ((URL?) -> Void)?
     private var currentOutputURL: URL?
     private let sessionQueue = DispatchQueue(label: "CameraService.Session")
 
+    private var isRecording = false
     public init(writer: VideoWriterProtocol = VideoWriter(),
                 sessionManager: SessionManagerProtocol = SessionManager()) {
         self.videoWriter = writer
@@ -56,6 +57,9 @@ public final class CameraService: NSObject, CameraServiceProtocol {
                         }
                     }
                 }
+                if let vConn = self.videoOutput.connection(with: .video), vConn.isVideoOrientationSupported {
+                    vConn.videoOrientation = .portrait
+                }
                 print("카메라 세션 시작")
                 DispatchQueue.main.async { completion(true) }
             }
@@ -78,30 +82,9 @@ public final class CameraService: NSObject, CameraServiceProtocol {
         print("녹화 시작 요청")
         sessionQueue.async { [weak self] in
             guard let self = self else { return }
-            guard !self.movieOutput.isRecording else {
-                print("이미 녹화 중")
-                DispatchQueue.main.async { completion(false) }
-                return
-            }
             let url = self.videoWriter.startWriting()
             self.currentOutputURL = url
-            if let connection = self.movieOutput.connection(with: .video) {
-                if #available(iOS 17.0, *) {
-                    if connection.isVideoRotationAngleSupported(0) {
-                        connection.videoRotationAngle = 0
-                    }
-                    if let previewConnection = self.previewLayer.connection,
-                       previewConnection.isVideoRotationAngleSupported(0) {
-                        previewConnection.videoRotationAngle = 0
-                    }
-                } else {
-                    if connection.isVideoOrientationSupported {
-                        connection.videoOrientation = .portrait
-                    }
-                    self.previewLayer.connection?.videoOrientation = .portrait
-                }
-            }
-            self.movieOutput.startRecording(to: url, recordingDelegate: self)
+            self.isRecording = true
             print("녹화 시작")
             DispatchQueue.main.async { completion(true) }
         }
@@ -111,11 +94,17 @@ public final class CameraService: NSObject, CameraServiceProtocol {
         print("녹화 중지 요청")
         sessionQueue.async { [weak self] in
             guard let self = self else { return }
-            self.recordingCompletion = completion
-            if self.movieOutput.isRecording {
-                self.movieOutput.stopRecording()
-            } else {
-                DispatchQueue.main.async { completion(nil) }
+            self.isRecording = false
+            self.videoWriter.finishWriting { [weak self] url in
+                guard let self = self else { return }
+                DispatchQueue.main.async {
+                    completion(url)
+                }
+                if let url = url {
+                    let session = ClimbingSession(fileName: url.lastPathComponent, fileURL: url)
+                    self.sessionManager.saveSession(session)
+                }
+                self.currentOutputURL = nil
             }
         }
     }
@@ -145,8 +134,15 @@ private extension CameraService {
             session.addOutput(photoOutput)
         }
 
-        if session.canAddOutput(movieOutput) {
-            session.addOutput(movieOutput)
+        if session.canAddOutput(videoOutput) {
+            videoOutput.alwaysDiscardsLateVideoFrames = true
+            videoOutput.setSampleBufferDelegate(self, queue: sessionQueue)
+            session.addOutput(videoOutput)
+        }
+
+        if session.canAddOutput(audioOutput) {
+            audioOutput.setSampleBufferDelegate(self, queue: sessionQueue)
+            session.addOutput(audioOutput)
         }
 
         print("카메라 세션 구성 완료")
@@ -194,22 +190,11 @@ private extension CameraService {
     }
 }
 
-// MARK: - AVCaptureFileOutputRecordingDelegate
-extension CameraService: AVCaptureFileOutputRecordingDelegate {
-    public func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-        videoWriter.finishWriting { _ in }
-        if let error = error {
-            print("녹화 중 오류 발생: \(error)")
-            DispatchQueue.main.async { [weak self] in self?.recordingCompletion?(nil) }
-        } else {
-            print("녹화 파일 저장 완료: \(outputFileURL.lastPathComponent)")
-            let fileName = outputFileURL.lastPathComponent
-            let session = ClimbingSession(fileName: fileName, fileURL: outputFileURL)
-            sessionManager.saveSession(session)
-            DispatchQueue.main.async { [weak self] in self?.recordingCompletion?(outputFileURL) }
-        }
-        recordingCompletion = nil
-        currentOutputURL = nil
+// MARK: - 샘플 버퍼 처리 델리게이트
+extension CameraService: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
+    public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        guard isRecording else { return }
+        videoWriter.appendFrame(sampleBuffer)
     }
 }
 

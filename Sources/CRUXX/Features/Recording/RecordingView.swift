@@ -21,6 +21,7 @@ struct CameraPreviewView: UIViewRepresentable {
             self.previewLayer = previewLayer
             super.init(frame: .zero)
             previewLayer.videoGravity = .resizeAspectFill
+            previewLayer.setAffineTransform(CGAffineTransform(rotationAngle: .pi / 2))
             layer.addSublayer(previewLayer)
         }
 
@@ -34,7 +35,7 @@ struct CameraPreviewView: UIViewRepresentable {
         }
 
         func updateFrame() {
-            previewLayer.frame = bounds
+            previewLayer.frame = CGRect(x: 0, y: 0, width: bounds.height, height: bounds.width)
         }
     }
 }
