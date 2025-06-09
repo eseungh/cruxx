@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import cruxxModel
 
 /// 녹화 상태를 나타냅니다.
 public enum RecordingState {
