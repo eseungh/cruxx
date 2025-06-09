@@ -2,6 +2,8 @@ import SwiftUI
 
 /// 탭 기반 메인 네비게이션을 담당합니다.
 public struct AppRouter: View {
+    @EnvironmentObject private var container: DIContainer
+
     public init() {}
 
     public var body: some View {
@@ -11,7 +13,7 @@ public struct AppRouter: View {
                     Label("홈", systemImage: "house.fill")
                 }
 
-            RecordingView()
+            RecordingView(container: container)
                 .tabItem {
                     Label("녹화", systemImage: "video.circle")
                 }
@@ -33,6 +35,7 @@ public struct AppRouter: View {
 struct AppRouter_Previews: PreviewProvider {
     static var previews: some View {
         AppRouter()
+            .environmentObject(DIContainer())
     }
 }
 #endif
