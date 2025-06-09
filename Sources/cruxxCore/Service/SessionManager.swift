@@ -1,4 +1,5 @@
 import Foundation
+import cruxxModel
 
 /// 세션 매니저 프로토콜입니다.
 public protocol SessionManagerProtocol {

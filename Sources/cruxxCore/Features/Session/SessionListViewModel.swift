@@ -1,4 +1,5 @@
 import Foundation
+import cruxxModel
 
 /// 세션 리스트 데이터를 관리하는 뷰모델입니다.
 public final class SessionListViewModel: ObservableObject {
