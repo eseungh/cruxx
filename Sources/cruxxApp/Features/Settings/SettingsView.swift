@@ -1,4 +1,5 @@
 import SwiftUI
+import cruxxCore
 
 /// 앱 기본 설정을 보여주는 화면입니다.
 public struct SettingsView: View {

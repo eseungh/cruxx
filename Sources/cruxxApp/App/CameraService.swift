@@ -1,6 +1,8 @@
 import Foundation
 import AVFoundation
 import UIKit
+import cruxxCore
+import cruxxModel
 
 /// AVFoundation 기반 기본 카메라 서비스 구현체입니다.
 public final class CameraService: NSObject, CameraServiceProtocol {

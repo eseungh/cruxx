@@ -1,4 +1,6 @@
 import SwiftUI
+import cruxxCore
+import cruxxModel
 
 /// 최근 세션 요약과 간단한 통계를 보여주는 메인 화면입니다.
 public struct MainView: View {

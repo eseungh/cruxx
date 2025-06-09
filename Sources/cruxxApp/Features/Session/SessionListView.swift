@@ -1,5 +1,7 @@
 import SwiftUI
 import AVKit
+import cruxxCore
+import cruxxModel
 
 /// 저장된 세션을 리스트로 보여주는 화면입니다.
 public struct SessionListView: View {
