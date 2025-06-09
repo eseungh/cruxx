@@ -1,3 +1,4 @@
+#if canImport(SwiftUI) && canImport(AVKit)
 import SwiftUI
 import AVKit
 import cruxxCore
@@ -41,6 +42,7 @@ public struct SessionListView: View {
         return df
     }
 }
+#endif
 
 #if DEBUG
 struct SessionListView_Previews: PreviewProvider {

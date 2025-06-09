@@ -1,3 +1,4 @@
+#if canImport(UIKit) && canImport(AVFoundation)
 import Foundation
 import AVFoundation
 import UIKit
@@ -101,6 +102,7 @@ public final class CameraService: NSObject, CameraServiceProtocol {
         }
     }
 }
+#endif
 
 private extension CameraService {
     func configureSession() {

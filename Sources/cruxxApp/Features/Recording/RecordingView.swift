@@ -1,3 +1,4 @@
+#if canImport(SwiftUI) && canImport(UIKit) && canImport(AVFoundation)
 import SwiftUI
 import AVFoundation
 import cruxxCore
@@ -108,6 +109,7 @@ public struct RecordingView: View {
         }
     }
 }
+#endif
 
 #if DEBUG
 struct RecordingView_Previews: PreviewProvider {

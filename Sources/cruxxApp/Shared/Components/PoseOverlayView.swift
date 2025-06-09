@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 /// 스켈레톤 포인트를 화면에 표시하는 간단한 오버레이 뷰입니다.
@@ -22,6 +23,7 @@ public struct PoseOverlayView: View {
         }
     }
 }
+#endif
 
 #if DEBUG
 struct PoseOverlayView_Previews: PreviewProvider {

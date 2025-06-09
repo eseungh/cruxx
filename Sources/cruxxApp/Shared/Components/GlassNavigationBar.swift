@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 /// 네비게이션 바에 글래스모피즘 효과를 주는 뷰 모디파이어입니다.
@@ -11,6 +12,7 @@ public struct GlassNavigationBar: ViewModifier {
             .toolbarColorScheme(.light, for: .navigationBar)
     }
 }
+#endif
 
 public extension View {
     /// 글래스모피즘 네비게이션 바를 적용합니다.

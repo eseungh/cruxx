@@ -30,7 +30,10 @@ let package = Package(
         .testTarget(
             name: "cruxxCoreTests",
             dependencies: ["cruxxCore"],
-            path: "Tests/cruxxCoreTests"
+            path: "Tests/cruxxCoreTests",
+            swiftSettings: [
+                .define("DISABLE_TESTING")
+            ]
         )
     ]
 )
