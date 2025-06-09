@@ -1,5 +1,7 @@
 import SwiftUI
 import AVKit
+import cruxxCore
+import cruxxModel
 
 /// 단일 세션 영상을 재생하고 분석 정보를 표시합니다.
 public struct SessionDetailView: View {

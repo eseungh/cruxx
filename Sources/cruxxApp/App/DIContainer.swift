@@ -1,4 +1,5 @@
 import Foundation
+import cruxxCore
 
 /// 앱 전역에서 사용되는 서비스 인스턴스를 보관합니다.
 public final class DIContainer: ObservableObject {

@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import cruxxCore
 
 /// 카메라 프리뷰를 보여주는 뷰입니다.
 struct CameraPreviewView: UIViewRepresentable {
