@@ -29,7 +29,7 @@ protocol SessionManagerProtocol { func fetchSessions() -> [ClimbingSession] // �
 
 **2. 영상 녹화/카메라 제어**
 
-protocol CameraServiceProtocol { func startCamera(completion: @escaping (Bool) -> Void) // 카메라 시작 func stopCamera() // 카메라 종료 func capturePhoto(completion: @escaping (UIImage?) -> Void) // 사진 캡처 func startRecording(completion: @escaping (Bool) -> Void) // 영상 녹화 시작 func stopRecording(completion: @escaping (URL?) -> Void) // 영상 녹화 종료, 파일 URL 반환 }
+protocol CameraServiceProtocol { func startCamera(completion: @escaping (Bool) -> Void) // 카메라 시작 func stopCamera() // 카메라 종료 func capturePhoto(completion: @escaping (Data?) -> Void) // 사진 데이터 캡처 func startRecording(completion: @escaping (Bool) -> Void) // 영상 녹화 시작 func stopRecording(completion: @escaping (URL?) -> Void) // 영상 녹화 종료, 파일 URL 반환 }
 
 ---
 
@@ -41,7 +41,7 @@ protocol VideoWriterProtocol { func startWriting() // 영상 기록 시작 func 
 
 **4. AI 동작/포즈 분석**
 
-protocol PoseAnalyzerProtocol { func analyze(videoURL: URL, completion: @escaping (PoseAnalysisResult) -> Void) // 영상 분석 func analyze(image: UIImage) -> PoseTimestampData? // 이미지(프레임) 분석 }
+protocol PoseAnalyzerProtocol { func analyze(videoURL: URL, completion: @escaping (PoseAnalysisResult) -> Void) // 영상 분석 func analyze(imageData: Data) -> PoseTimestampData? // 이미지(프레임) 분석 }
 
 ---
 

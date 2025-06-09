@@ -1,5 +1,5 @@
 import XCTest
-@testable import cruxx
+@testable import cruxxCore
 
 final class MainViewModelTests: XCTestCase {
     /// 최근 세션이 3개까지 정렬되어 로드되는지 확인합니다.

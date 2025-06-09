@@ -1,5 +1,5 @@
 import XCTest
-@testable import cruxx
+@testable import cruxxCore
 
 final class SessionManagerTests: XCTestCase {
     /// 세션을 저장하고 불러올 수 있는지 확인합니다.
