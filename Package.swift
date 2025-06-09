@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "cruxx",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v15)
     ],
     products: [
         .library(name: "cruxxApp", targets: ["cruxxApp"]),
