@@ -1,6 +1,4 @@
 // swift-tools-version: 6.1
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
 import PackageDescription
 
 let package = Package(
@@ -9,18 +7,29 @@ let package = Package(
         .iOS(.v16)
     ],
     products: [
-        .library(name: "cruxx", targets: ["cruxx"])
+        .library(name: "cruxxApp", targets: ["cruxxApp"]),
+        .library(name: "cruxxCore", targets: ["cruxxCore"]),
+        .library(name: "cruxxModel", targets: ["cruxxModel"])
     ],
     targets: [
         .target(
-            name: "cruxx",
-            dependencies: [],
-            path: "Sources/CRUXX"
+            name: "cruxxApp",
+            dependencies: ["cruxxCore", "cruxxModel"],
+            path: "Sources/cruxxApp"
+        ),
+        .target(
+            name: "cruxxCore",
+            dependencies: ["cruxxModel"],
+            path: "Sources/cruxxCore"
+        ),
+        .target(
+            name: "cruxxModel",
+            path: "Sources/cruxxModel"
         ),
         .testTarget(
-            name: "cruxxTests",
-            dependencies: ["cruxx"],
-            path: "Tests/CRUXXTests"
+            name: "cruxxCoreTests",
+            dependencies: ["cruxxCore"],
+            path: "Tests/cruxxCoreTests"
         )
     ]
 )

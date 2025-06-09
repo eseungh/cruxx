@@ -2,16 +2,6 @@ import Foundation
 import AVFoundation
 import UIKit
 
-/// 카메라 및 녹화를 제어하는 서비스 프로토콜입니다.
-public protocol CameraServiceProtocol {
-    var previewLayer: AVCaptureVideoPreviewLayer { get }
-    func startCamera(completion: @escaping (Bool) -> Void)
-    func stopCamera()
-    func capturePhoto(completion: @escaping (UIImage?) -> Void)
-    func startRecording(completion: @escaping (Bool) -> Void)
-    func stopRecording(completion: @escaping (URL?) -> Void)
-}
-
 /// AVFoundation 기반 기본 카메라 서비스 구현체입니다.
 public final class CameraService: NSObject, CameraServiceProtocol {
     public private(set) var previewLayer: AVCaptureVideoPreviewLayer
@@ -73,7 +63,7 @@ public final class CameraService: NSObject, CameraServiceProtocol {
         }
     }
 
-    public func capturePhoto(completion: @escaping (UIImage?) -> Void) {
+    public func capturePhoto(completion: @escaping (Data?) -> Void) {
         let settings = AVCapturePhotoSettings()
         photoOutput.capturePhoto(with: settings, delegate: PhotoCaptureDelegate(completion: completion))
     }
@@ -199,9 +189,9 @@ extension CameraService: AVCaptureVideoDataOutputSampleBufferDelegate, AVCapture
 }
 
 private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegate {
-    private let completion: (UIImage?) -> Void
+    private let completion: (Data?) -> Void
 
-    init(completion: @escaping (UIImage?) -> Void) {
+    init(completion: @escaping (Data?) -> Void) {
         self.completion = completion
     }
 
@@ -211,10 +201,10 @@ private final class PhotoCaptureDelegate: NSObject, AVCapturePhotoCaptureDelegat
             completion(nil)
             return
         }
-        guard let data = photo.fileDataRepresentation(), let image = UIImage(data: data) else {
+        guard let data = photo.fileDataRepresentation() else {
             completion(nil)
             return
         }
-        completion(image)
+        completion(data)
     }
 }

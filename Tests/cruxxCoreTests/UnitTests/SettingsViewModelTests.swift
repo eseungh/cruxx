@@ -1,7 +1,7 @@
 // SettingsViewModel 테스트
 
 import XCTest
-@testable import cruxx
+@testable import cruxxCore
 
 final class SettingsViewModelTests: XCTestCase {
     func test알림설정변경시저장됨() {

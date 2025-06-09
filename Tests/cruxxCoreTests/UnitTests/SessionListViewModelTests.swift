@@ -1,5 +1,5 @@
 import XCTest
-@testable import cruxx
+@testable import cruxxCore
 
 final class SessionListViewModelTests: XCTestCase {
     /// 삭제 기능 동작 시 세션이 제거되는지 확인합니다.

@@ -1,6 +1,5 @@
-#if canImport(AVFoundation) && canImport(UIKit)
 import XCTest
-@testable import cruxx
+@testable import cruxxCore
 
 final class RecordingViewModelTests: XCTestCase {
     /// 녹화 시작 시 상태가 변경되고 서비스가 호출되는지 확인합니다.
@@ -13,4 +12,3 @@ final class RecordingViewModelTests: XCTestCase {
         XCTAssertTrue(camera.didStartRecording)
     }
 }
-#endif

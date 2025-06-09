@@ -1,11 +1,6 @@
 import Foundation
-@testable import cruxx
-#if canImport(UIKit)
-import UIKit
-#endif
-#if canImport(AVFoundation)
 import AVFoundation
-#endif
+@testable import cruxxCore
 
 // 메모리 기반 세션 저장소 목 객체
 final class MockSessionRepository: SessionRepositoryProtocol {
@@ -30,7 +25,6 @@ final class MockSessionManager: SessionManagerProtocol {
     func fetchSession(by id: UUID) -> ClimbingSession? { repository.getSessions().first { $0.id == id } }
 }
 
-#if canImport(AVFoundation) && canImport(UIKit)
 // 실제 하드웨어 접근을 하지 않는 카메라 서비스 목 객체
 final class MockCameraService: CameraServiceProtocol {
     var previewLayer: AVCaptureVideoPreviewLayer = .init()
@@ -40,7 +34,7 @@ final class MockCameraService: CameraServiceProtocol {
 
     func startCamera(completion: @escaping (Bool) -> Void) { completion(true) }
     func stopCamera() {}
-    func capturePhoto(completion: @escaping (UIImage?) -> Void) { completion(nil) }
+    func capturePhoto(completion: @escaping (Data?) -> Void) { completion(nil) }
     func startRecording(completion: @escaping (Bool) -> Void) {
         didStartRecording = true
         completion(true)
@@ -50,4 +44,3 @@ final class MockCameraService: CameraServiceProtocol {
         completion(recordingURL)
     }
 }
-#endif
