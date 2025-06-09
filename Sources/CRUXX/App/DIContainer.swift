@@ -6,8 +6,8 @@ public final class DIContainer: ObservableObject {
     public let cameraService: CameraServiceProtocol
 
     public init(sessionManager: SessionManagerProtocol = SessionManager(),
-                cameraService: CameraServiceProtocol = CameraService()) {
+                cameraService: CameraServiceProtocol? = nil) {
         self.sessionManager = sessionManager
-        self.cameraService = cameraService
+        self.cameraService = cameraService ?? CameraService(sessionManager: sessionManager)
     }
 }

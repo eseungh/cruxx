@@ -20,12 +20,15 @@ public final class CameraService: NSObject, CameraServiceProtocol {
     private let photoOutput = AVCapturePhotoOutput()
     private let movieOutput = AVCaptureMovieFileOutput()
     private let videoWriter: VideoWriterProtocol
+    private let sessionManager: SessionManagerProtocol
     private var recordingCompletion: ((URL?) -> Void)?
     private var currentOutputURL: URL?
     private let sessionQueue = DispatchQueue(label: "CameraService.Session")
 
-    public init(writer: VideoWriterProtocol = VideoWriter()) {
+    public init(writer: VideoWriterProtocol = VideoWriter(),
+                sessionManager: SessionManagerProtocol = SessionManager()) {
         self.videoWriter = writer
+        self.sessionManager = sessionManager
         self.previewLayer = AVCaptureVideoPreviewLayer(session: session)
         super.init()
     }
@@ -200,6 +203,9 @@ extension CameraService: AVCaptureFileOutputRecordingDelegate {
             DispatchQueue.main.async { [weak self] in self?.recordingCompletion?(nil) }
         } else {
             print("녹화 파일 저장 완료: \(outputFileURL.lastPathComponent)")
+            let fileName = outputFileURL.lastPathComponent
+            let session = ClimbingSession(fileName: fileName, fileURL: outputFileURL)
+            sessionManager.saveSession(session)
             DispatchQueue.main.async { [weak self] in self?.recordingCompletion?(outputFileURL) }
         }
         recordingCompletion = nil
