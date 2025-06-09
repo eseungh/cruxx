@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 import cruxxCore
 import cruxxModel
@@ -49,6 +50,7 @@ public struct MainView: View {
         .glassNavigationBar()
     }
 }
+#endif
 
 #if DEBUG
 struct MainView_Previews: PreviewProvider {

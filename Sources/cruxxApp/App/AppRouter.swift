@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 /// 탭 기반 메인 네비게이션을 담당합니다.
@@ -30,7 +31,8 @@ public struct AppRouter: View {
         }
     }
 }
-
+#endif
+#if canImport(SwiftUI)
 #if DEBUG
 struct AppRouter_Previews: PreviewProvider {
     static var previews: some View {
@@ -38,4 +40,5 @@ struct AppRouter_Previews: PreviewProvider {
             .environmentObject(DIContainer())
     }
 }
+#endif
 #endif

@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 import cruxxCore
 
@@ -27,6 +28,7 @@ public struct SettingsView: View {
         }
     }
 }
+#endif
 
 #if DEBUG
 struct SettingsView_Previews: PreviewProvider {

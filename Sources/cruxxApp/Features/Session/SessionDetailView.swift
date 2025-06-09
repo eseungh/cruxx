@@ -1,3 +1,4 @@
+#if canImport(SwiftUI) && canImport(AVKit)
 import SwiftUI
 import AVKit
 import cruxxCore
@@ -21,6 +22,7 @@ public struct SessionDetailView: View {
         .navigationTitle(viewModel.player == nil ? "세션" : "세션 상세")
     }
 }
+#endif
 
 #if DEBUG
 struct SessionDetailView_Previews: PreviewProvider {

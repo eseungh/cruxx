@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import SwiftUI
 
 /// 앱 전반에서 사용되는 기본 버튼 스타일입니다.
@@ -22,6 +23,7 @@ public struct PrimaryButton: View {
         }
     }
 }
+#endif
 
 #if DEBUG
 struct PrimaryButton_Previews: PreviewProvider {

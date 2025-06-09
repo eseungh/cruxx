@@ -1,3 +1,4 @@
+#if canImport(UIKit) && canImport(SwiftUI)
 import SwiftUI
 
 /// 앱의 시작점을 정의합니다.
@@ -22,4 +23,5 @@ struct CruxxApp_Previews: PreviewProvider {
             .environmentObject(DIContainer())
     }
 }
+#endif
 #endif

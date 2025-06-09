@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import Foundation
 import cruxxCore
 
@@ -12,3 +13,4 @@ public final class DIContainer: ObservableObject {
         self.cameraService = cameraService ?? CameraService(sessionManager: sessionManager)
     }
 }
+#endif

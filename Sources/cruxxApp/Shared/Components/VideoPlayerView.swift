@@ -1,3 +1,4 @@
+#if canImport(SwiftUI) && canImport(AVKit)
 import SwiftUI
 import AVKit
 
@@ -13,6 +14,7 @@ public struct VideoPlayerView: View {
         VideoPlayer(player: AVPlayer(url: url))
     }
 }
+#endif
 
 #if DEBUG
 struct VideoPlayerView_Previews: PreviewProvider {
