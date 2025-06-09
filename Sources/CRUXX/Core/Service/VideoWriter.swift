@@ -36,7 +36,8 @@ public final class VideoWriter: NSObject, VideoWriterProtocol {
     /// 카메라에서 전달받은 샘플 버퍼를 기록합니다.
     public func appendFrame(_ sampleBuffer: CMSampleBuffer) {
         guard let writer = assetWriter, CMSampleBufferDataIsReady(sampleBuffer) else { return }
-        let isVideo = sampleBuffer.formatDescription?.mediaType == kCMMediaType_Video
+        let isVideo = sampleBuffer.formatDescription
+            .map { CMFormatDescriptionGetMediaType($0) == kCMMediaType_Video } ?? false
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         if writer.status == .unknown {
             writer.startSession(atSourceTime: timestamp)
@@ -77,7 +78,7 @@ public final class VideoWriter: NSObject, VideoWriterProtocol {
         ]
         let vInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
         vInput.expectsMediaDataInRealTime = true
-        vInput.preferredTransform = CGAffineTransform(rotationAngle: .pi / 2)
+        vInput.transform = CGAffineTransform(rotationAngle: .pi / 2)
         if writer.canAdd(vInput) { writer.add(vInput) }
         videoInput = vInput
 
