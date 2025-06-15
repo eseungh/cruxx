@@ -86,18 +86,17 @@ public final class CameraService: NSObject, CameraServiceProtocol {
 
     public func stopRecording(completion: @Sendable @escaping (URL?) -> Void) {
         print("녹화 중지 요청")
+        let manager = sessionManager // self 캡처로 인한 경쟁 조건 방지
         sessionQueue.async { [weak self] in
             guard let self = self else { return }
             self.isRecording = false
-            self.videoWriter.finishWriting { [weak self] (url: URL?) -> Void in
+            self.videoWriter.finishWriting { [weak self] url in
                 guard let self = self else { return }
-                DispatchQueue.main.async {
-                    completion(url)
-                }
+                DispatchQueue.main.async { completion(url) }
                 if let url = url {
                     let session = ClimbingSession(fileName: url.lastPathComponent, fileURL: url)
                     Task { @MainActor in
-                        self.sessionManager.saveSession(session)
+                        manager.saveSession(session)
                     }
                 }
                 self.currentOutputURL = nil

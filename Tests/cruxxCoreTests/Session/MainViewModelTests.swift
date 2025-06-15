@@ -1,3 +1,4 @@
+#if canImport(XCTest)
 import XCTest
 @testable import cruxxCore
 
@@ -19,3 +20,4 @@ final class MainViewModelTests: XCTestCase {
         XCTAssertEqual(vm.recentSessions.map { $0.fileName }, ["b.mov", "c.mov", "a.mov"])
     }
 }
+#endif

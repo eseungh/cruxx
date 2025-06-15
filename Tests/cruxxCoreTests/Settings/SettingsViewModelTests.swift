@@ -1,5 +1,6 @@
 // SettingsViewModel 테스트
 
+#if canImport(XCTest)
 import XCTest
 @testable import cruxxCore
 
@@ -13,3 +14,4 @@ final class SettingsViewModelTests: XCTestCase {
         XCTAssertTrue(stored)
     }
 }
+#endif

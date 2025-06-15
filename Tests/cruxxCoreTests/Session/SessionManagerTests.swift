@@ -1,3 +1,4 @@
+#if canImport(XCTest)
 import XCTest
 @testable import cruxxCore
 
@@ -13,3 +14,4 @@ final class SessionManagerTests: XCTestCase {
         XCTAssertEqual(fetched.first?.id, session.id)
     }
 }
+#endif

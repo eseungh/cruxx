@@ -1,3 +1,4 @@
+#if canImport(XCTest)
 import XCTest
 @testable import cruxxCore
 
@@ -14,3 +15,4 @@ final class SessionListViewModelTests: XCTestCase {
         XCTAssertTrue(vm.sessions.isEmpty)
     }
 }
+#endif
