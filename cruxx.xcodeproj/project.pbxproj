@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		312A05DA2DFEE513001D3C1B /* cruxxApp in Frameworks */ = {isa = PBXBuildFile; productRef = 312A05D92DFEE513001D3C1B /* cruxxApp */; };
+		312A05DC2DFEE513001D3C1B /* cruxxCore in Frameworks */ = {isa = PBXBuildFile; productRef = 312A05DB2DFEE513001D3C1B /* cruxxCore */; };
+		312A05DE2DFEE513001D3C1B /* cruxxModel in Frameworks */ = {isa = PBXBuildFile; productRef = 312A05DD2DFEE513001D3C1B /* cruxxModel */; };
 		31E54BF22DF2E661003B7D50 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 31E54BCD2DF2E661003B7D50 /* Assets.xcassets */; };
 		31E54BF32DF2E661003B7D50 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 31E54BD12DF2E661003B7D50 /* README.md */; };
 /* End PBXBuildFile section */
@@ -34,27 +37,6 @@
 		31E54BF72DF2E77E003B7D50 /* cruxx.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = cruxx.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		31DBE3AE2DF33CC500307E12 /* Exceptions for "Tests" folder in "cruxx" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				CRUXXTests/UITests/MainViewUITests.swift,
-				CRUXXTests/UnitTests/SessionManagerTests.swift,
-				CRUXXTests/UnitTests/SettingsViewModelTests.swift,
-			);
-			target = 31A5C34C2DF2E59B00C971A9 /* cruxx */;
-		};
-		31DBE3AF2DF33CC500307E12 /* Exceptions for "Tests" folder in "cruxxTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				CRUXXTests/UITests/MainViewUITests.swift,
-				CRUXXTests/UnitTests/SessionManagerTests.swift,
-				CRUXXTests/UnitTests/SettingsViewModelTests.swift,
-			);
-			target = 31DBE3A12DF33CB900307E12 /* cruxxTests */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		31DBE3332DF3370400307E12 /* Preview */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -68,10 +50,6 @@
 		};
 		31DBE3742DF3370400307E12 /* Tests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				31DBE3AE2DF33CC500307E12 /* Exceptions for "Tests" folder in "cruxx" target */,
-				31DBE3AF2DF33CC500307E12 /* Exceptions for "Tests" folder in "cruxxTests" target */,
-			);
 			path = Tests;
 			sourceTree = "<group>";
 		};
@@ -87,6 +65,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				312A05DE2DFEE513001D3C1B /* cruxxModel in Frameworks */,
+				312A05DC2DFEE513001D3C1B /* cruxxCore in Frameworks */,
+				312A05DA2DFEE513001D3C1B /* cruxxApp in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +131,9 @@
 			);
 			name = cruxx;
 			packageProductDependencies = (
+				312A05D92DFEE513001D3C1B /* cruxxApp */,
+				312A05DB2DFEE513001D3C1B /* cruxxCore */,
+				312A05DD2DFEE513001D3C1B /* cruxxModel */,
 			);
 			productName = cruxx;
 			productReference = 31A5C34D2DF2E59B00C971A9 /* cruxx.app */;
@@ -206,6 +190,9 @@
 			);
 			mainGroup = 31A5C3442DF2E59B00C971A9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				312A05D82DFEE513001D3C1B /* XCLocalSwiftPackageReference "../cruxx" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 31A5C34E2DF2E59B00C971A9 /* Products */;
 			projectDirPath = "";
@@ -536,6 +523,28 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		312A05D82DFEE513001D3C1B /* XCLocalSwiftPackageReference "../cruxx" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../cruxx;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		312A05D92DFEE513001D3C1B /* cruxxApp */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = cruxxApp;
+		};
+		312A05DB2DFEE513001D3C1B /* cruxxCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = cruxxCore;
+		};
+		312A05DD2DFEE513001D3C1B /* cruxxModel */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = cruxxModel;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 31A5C3452DF2E59B00C971A9 /* Project object */;
 }

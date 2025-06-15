@@ -1,5 +1,6 @@
 #if canImport(UIKit) && canImport(SwiftUI)
 import SwiftUI
+import cruxxCore
 
 /// 앱의 시작점을 정의합니다.
 @main
