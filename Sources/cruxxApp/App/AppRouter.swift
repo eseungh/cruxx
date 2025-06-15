@@ -1,5 +1,6 @@
 #if canImport(SwiftUI)
 import SwiftUI
+import cruxxCore
 
 /// 탭 기반 메인 네비게이션을 담당합니다.
 public struct AppRouter: View {
