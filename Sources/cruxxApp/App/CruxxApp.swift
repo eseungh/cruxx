@@ -6,7 +6,13 @@ import SwiftUI
 struct CruxxApp: App {
     /// 세로 모드 고정을 위해 AppDelegate를 연결합니다.
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @StateObject private var container = DIContainer()
+    @StateObject private var container: DIContainer
+
+    init() {
+        // SessionManager는 @MainActor에서 생성 후 DIContainer에 주입합니다.
+        let manager = SessionManager()
+        _container = StateObject(wrappedValue: DIContainer(sessionManager: manager))
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -20,7 +26,7 @@ struct CruxxApp: App {
 struct CruxxApp_Previews: PreviewProvider {
     static var previews: some View {
         AppRouter()
-            .environmentObject(DIContainer())
+            .environmentObject(DIContainer(sessionManager: SessionManager()))
     }
 }
 #endif

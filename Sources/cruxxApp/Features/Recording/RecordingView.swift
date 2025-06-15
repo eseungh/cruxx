@@ -114,7 +114,7 @@ public struct RecordingView: View {
 #if DEBUG
 struct RecordingView_Previews: PreviewProvider {
     static var previews: some View {
-        RecordingView(container: DIContainer())
+        RecordingView(container: DIContainer(sessionManager: SessionManager()))
     }
 }
 #endif

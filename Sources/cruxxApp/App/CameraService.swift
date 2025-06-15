@@ -19,8 +19,9 @@ public final class CameraService: NSObject, CameraServiceProtocol {
     private let sessionQueue = DispatchQueue(label: "CameraService.Session")
 
     private var isRecording = false
+    /// SessionManager는 @MainActor 컨텍스트에서 생성해 주입해야 합니다.
     public init(writer: VideoWriterProtocol = VideoWriter(),
-                sessionManager: SessionManagerProtocol = SessionManager()) {
+                sessionManager: SessionManagerProtocol) {
         self.videoWriter = writer
         self.sessionManager = sessionManager
         self.previewLayer = AVCaptureVideoPreviewLayer(session: session)

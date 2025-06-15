@@ -49,7 +49,7 @@ public struct SessionListView: View {
 #if DEBUG
 struct SessionListView_Previews: PreviewProvider {
     static var previews: some View {
-        SessionListView(container: DIContainer())
+        SessionListView(container: DIContainer(sessionManager: SessionManager()))
     }
 }
 #endif

@@ -37,7 +37,7 @@ public struct AppRouter: View {
 struct AppRouter_Previews: PreviewProvider {
     static var previews: some View {
         AppRouter()
-            .environmentObject(DIContainer())
+            .environmentObject(DIContainer(sessionManager: SessionManager()))
     }
 }
 #endif

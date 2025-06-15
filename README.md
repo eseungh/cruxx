@@ -107,3 +107,13 @@ CRUXX는 단순한 기능 구현이 아니라,
 * [STRUCTURE.md](STRUCTURE.md) — 폴더/파일 구조 기준
 * [PROTOCOLS.md](PROTOCOLS.md) — 각 레이어별 책임 인터페이스
 * [AGENTS.md](AGENTS.md) — 전체 협업 및 코드 작성 원칙
+
+### DIContainer 초기화 예시
+
+```swift
+Task { @MainActor in
+    let manager = SessionManager()
+    let container = DIContainer(sessionManager: manager)
+    // 이후 View 또는 ViewModel에 container를 주입합니다.
+}
+```
