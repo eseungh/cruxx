@@ -96,7 +96,9 @@ public final class CameraService: NSObject, CameraServiceProtocol {
                 }
                 if let url = url {
                     let session = ClimbingSession(fileName: url.lastPathComponent, fileURL: url)
-                    Task { await self.sessionManager.saveSession(session) }
+                    Task { @MainActor in
+                        self.sessionManager.saveSession(session)
+                    }
                 }
                 self.currentOutputURL = nil
             }

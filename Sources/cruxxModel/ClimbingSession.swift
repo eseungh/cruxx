@@ -1,7 +1,7 @@
 import Foundation
 
 /// 등반 세션 모델을 나타냅니다.
-public struct ClimbingSession: Identifiable, Codable {
+public struct ClimbingSession: Identifiable, Codable, Sendable {
     /// 세션 고유 식별자
     public let id: UUID
     /// 저장된 영상 파일 이름
