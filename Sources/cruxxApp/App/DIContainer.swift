@@ -7,7 +7,15 @@ public final class DIContainer: ObservableObject {
     public let sessionManager: SessionManagerProtocol
     public let cameraService: CameraServiceProtocol
 
-    public init(sessionManager: SessionManagerProtocol = SessionManager(),
+    /// SessionManager는 외부에서 생성하여 주입합니다.
+    /// 예시:
+    /// ```swift
+    /// Task { @MainActor in
+    ///     let manager = SessionManager()
+    ///     let container = DIContainer(sessionManager: manager)
+    /// }
+    /// ```
+    public init(sessionManager: SessionManagerProtocol,
                 cameraService: CameraServiceProtocol? = nil) {
         self.sessionManager = sessionManager
         self.cameraService = cameraService ?? CameraService(sessionManager: sessionManager)
