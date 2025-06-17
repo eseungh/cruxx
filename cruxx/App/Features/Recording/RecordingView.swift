@@ -6,35 +6,22 @@ struct RecordingView: View {
     @StateObject private var viewModel = RecordingViewModel()
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .bottom) {
             CameraPreviewView(layer: viewModel.previewLayer)
                 .ignoresSafeArea()
 
-            VStack {
-                Spacer()
-
-                VStack(spacing: 16) {
-                    Text(viewModel.isRecording ? "Recording..." : "Ready")
-                        .font(.headline)
-                        .foregroundColor(.white)
-
-                    Button(action: {
-                        if viewModel.isRecording {
-                            viewModel.stopRecording()
-                        } else {
-                            viewModel.startRecording()
-                        }
-                    }) {
-                        Circle()
-                            .fill(viewModel.isRecording ? Color.gray : Color.red)
-                            .frame(width: 70, height: 70)
-                    }
+            Button(action: {
+                if viewModel.isRecording {
+                    viewModel.stopRecording()
+                } else {
+                    viewModel.startRecording()
                 }
-                .padding(24)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 25))
-                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
-                .padding(.bottom, 32)
+            }) {
+                Circle()
+                    .fill(viewModel.isRecording ? Color.gray : Color.red)
+                    .frame(width: 80, height: 80)
             }
+            .padding(.bottom, 40)
         }
     }
 }
