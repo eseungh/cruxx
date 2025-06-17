@@ -4,7 +4,7 @@ import Photos
 
 /// AVFoundation을 이용해 카메라 세션과 녹화를 관리합니다.
 final class RecordingManager: NSObject {
-    private let session = AVCaptureSession()
+    let session = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "RecordingSessionQueue")
     private let videoOutput = AVCaptureVideoDataOutput()
 

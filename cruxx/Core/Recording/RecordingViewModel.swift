@@ -5,24 +5,36 @@ import AVFoundation
 @MainActor
 final class RecordingViewModel: ObservableObject {
     @Published private(set) var isRecording: Bool = false
-    private let manager = RecordingManager()
+    private let recordingManager = RecordingManager()
+
+    var session: AVCaptureSession {
+        recordingManager.session
+    }
 
     var previewLayer: AVCaptureVideoPreviewLayer {
-        manager.previewLayer
+        recordingManager.previewLayer
+    }
+
+    /// 카메라 세션을 시작합니다.
+    func startSession() {
+        recordingManager.startSession()
+    }
+
+    /// 카메라 세션을 종료합니다.
+    func stopSession() {
+        recordingManager.stopSession()
     }
 
     /// 녹화를 시작합니다.
     func startRecording() {
-        manager.startSession()
-        manager.startRecording()
+        recordingManager.startRecording()
         isRecording = true
     }
 
     /// 녹화를 종료합니다.
     func stopRecording() {
-        manager.stopRecording { [weak self] in
+        recordingManager.stopRecording { [weak self] in
             self?.isRecording = false
-            self?.manager.stopSession()
         }
     }
 }
