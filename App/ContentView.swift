@@ -8,8 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
+    init() {
+        UITabBar.appearance().backgroundColor = .clear
+    }
+
     var body: some View {
         ZStack {
+            Image("background")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+
             TabView {
                 Text("녹화 화면 준비 중입니다.")
                     .tabItem {
@@ -26,11 +35,12 @@ struct ContentView: View {
                         Label("Settings", systemImage: "gearshape")
                     }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .padding()
-            .opacity(0.9)
+            .padding(.bottom, 24)
+            .background(
+                .ultraThinMaterial,
+                in: RoundedRectangle(cornerRadius: 25)
+            )
+            .shadow(color: .black.opacity(0.15), radius: 15, x: 0, y: 10)
         }
     }
 }
