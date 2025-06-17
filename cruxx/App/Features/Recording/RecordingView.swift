@@ -37,7 +37,15 @@ struct CameraPreview: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
         let view = UIView(frame: .zero)
         layer.videoGravity = .resizeAspectFill
-        layer.connection?.videoOrientation = .portrait
+        if let connection = layer.connection {
+            if #available(iOS 17.0, *) {
+                if connection.isVideoRotationAngleSupported(90) {
+                    connection.videoRotationAngle = 90
+                }
+            } else if connection.isVideoOrientationSupported {
+                connection.videoOrientation = .portrait
+            }
+        }
         view.layer.addSublayer(layer)
         return view
     }
