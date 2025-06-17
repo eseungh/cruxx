@@ -114,6 +114,7 @@ final class RecordingViewModel: ObservableObject {
         entity.setValue(session.duration, forKey: "duration")
         do {
             try context.save()
+            NotificationCenter.default.post(name: .didSaveClimbingSession, object: nil)
         } catch {
             print("세션 저장 실패: \(error)")
         }
