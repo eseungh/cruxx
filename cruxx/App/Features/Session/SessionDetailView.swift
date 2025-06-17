@@ -8,56 +8,66 @@ struct SessionDetailView: View {
     @State private var player: AVPlayer?
 
     var body: some View {
-        ZStack {
-            if let player {
-                VideoPlayer(player: player)
-                    .ignoresSafeArea()
-            } else {
-                Color.black.ignoresSafeArea()
-            }
+        VStack(spacing: 20) {
+            ZStack(alignment: .topTrailing) {
+                if let player {
+                    VideoPlayer(player: player)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity)
+                        .frame(maxHeight: UIScreen.main.bounds.height * 0.4)
+                        .background(Color.black)
+                } else {
+                    Color.black
+                        .frame(maxWidth: .infinity)
+                        .frame(maxHeight: UIScreen.main.bounds.height * 0.4)
+                }
 
-            VStack(alignment: .leading, spacing: 8) {
-                Spacer()
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(session.filename)
-                        .font(.headline)
+                Button(action: { dismiss() }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 24))
                         .foregroundColor(.white)
-                    Text(dateString(from: session.date))
+                        .padding(8)
+                        .background(
+                            .ultraThinMaterial,
+                            in: Circle()
+                        )
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                        )
+                        .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
+                }
+                .padding()
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .padding(.top)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(session.filename)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                Text(dateString(from: session.date))
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.8))
+                if let duration = session.duration {
+                    Text(timeString(from: duration))
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.8))
-                    if let duration = session.duration {
-                        Text(timeString(from: duration))
-                            .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.8))
-                    }
                 }
-                .padding(16)
-                .background(
-                    .ultraThinMaterial,
-                    in: RoundedRectangle(cornerRadius: 20)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(Color.white.opacity(0.15), lineWidth: 1)
-                )
-                .padding()
             }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                .ultraThinMaterial,
+                in: RoundedRectangle(cornerRadius: 20)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.white.opacity(0.15), lineWidth: 1)
+            )
+            .padding(.horizontal)
 
-            HStack {
-                Spacer()
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                        .foregroundColor(.white)
-                        .padding(10)
-                        .background(Color.black.opacity(0.5))
-                        .clipShape(Circle())
-                }
-                .padding()
-            }
+            Spacer()
         }
         .onAppear {
             let url = URL(fileURLWithPath: session.filePath)
