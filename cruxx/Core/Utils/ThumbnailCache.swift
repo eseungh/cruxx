@@ -16,4 +16,9 @@ final class ThumbnailCache {
     func set(_ image: UIImage, for key: String) {
         cache[key] = image
     }
+
+    /// 모든 캐시를 비웁니다.
+    func clear() {
+        cache.removeAll()
+    }
 }

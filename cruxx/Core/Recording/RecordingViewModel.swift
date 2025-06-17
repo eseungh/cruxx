@@ -9,6 +9,7 @@ final class RecordingViewModel: ObservableObject {
     @Published private(set) var isRecording: Bool = false
     @Published var elapsedTime: TimeInterval = 0
     @Published var showSaveMessage: Bool = false
+    var autoAnalyzeAfterRecording: Bool = false
     private let recordingManager = RecordingManager()
     private var elapsedTimer: Timer?
     private var backgroundObserver: NSObjectProtocol?
@@ -101,6 +102,10 @@ final class RecordingViewModel: ObservableObject {
                 Task { @MainActor in
                     self?.showSaveMessage = false
                 }
+            }
+
+            if self.autoAnalyzeAfterRecording {
+                print("Auto analyze session")
             }
         }
     }

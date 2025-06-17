@@ -4,6 +4,7 @@ import AVFoundation
 
 /// AVFoundation을 이용해 카메라 세션과 녹화를 관리합니다.
 final class RecordingManager: NSObject {
+    @AppStorage("includeMic") private var includeMic: Bool = true
     let session = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "RecordingSessionQueue")
     private let videoOutput = AVCaptureVideoDataOutput()
@@ -58,11 +59,12 @@ final class RecordingManager: NSObject {
 
         session.addInput(input)
 
-        // 마이크 입력을 세션에 추가합니다.
-        if let audioDevice = AVCaptureDevice.default(for: .audio),
-           let audioInput = try? AVCaptureDeviceInput(device: audioDevice),
-           session.canAddInput(audioInput) {
-            session.addInput(audioInput)
+        if includeMic {
+            if let audioDevice = AVCaptureDevice.default(for: .audio),
+               let audioInput = try? AVCaptureDeviceInput(device: audioDevice),
+               session.canAddInput(audioInput) {
+                session.addInput(audioInput)
+            }
         }
         
         if session.canAddOutput(videoOutput) {
@@ -70,9 +72,11 @@ final class RecordingManager: NSObject {
             session.addOutput(videoOutput)
         }
 
-        if session.canAddOutput(audioOutput) {
-            audioOutput.setSampleBufferDelegate(self, queue: sessionQueue)
-            session.addOutput(audioOutput)
+        if includeMic {
+            if session.canAddOutput(audioOutput) {
+                audioOutput.setSampleBufferDelegate(self, queue: sessionQueue)
+                session.addOutput(audioOutput)
+            }
         }
         
         if let connection = videoOutput.connection(with: .video) {
@@ -122,7 +126,9 @@ final class RecordingManager: NSObject {
             self.videoOutput.setSampleBufferDelegate(nil, queue: nil)
             self.videoOutput.setSampleBufferDelegate(self, queue: self.sessionQueue)
             self.audioOutput.setSampleBufferDelegate(nil, queue: nil)
-            self.audioOutput.setSampleBufferDelegate(self, queue: self.sessionQueue)
+            if self.includeMic {
+                self.audioOutput.setSampleBufferDelegate(self, queue: self.sessionQueue)
+            }
             
             let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let rawDir = documents.appendingPathComponent("raw", isDirectory: true)
@@ -155,17 +161,19 @@ final class RecordingManager: NSObject {
                 self.writerInput = input
             }
 
-            let audioSettings: [String: Any] = [
-                AVFormatIDKey: kAudioFormatMPEG4AAC,
-                AVNumberOfChannelsKey: 1,
-                AVSampleRateKey: 44100,
-                AVEncoderBitRateKey: 64000
-            ]
-            let audioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
-            audioInput.expectsMediaDataInRealTime = true
-            if assetWriter.canAdd(audioInput) {
-                assetWriter.add(audioInput)
-                self.writerAudioInput = audioInput
+            if self.includeMic {
+                let audioSettings: [String: Any] = [
+                    AVFormatIDKey: kAudioFormatMPEG4AAC,
+                    AVNumberOfChannelsKey: 1,
+                    AVSampleRateKey: 44100,
+                    AVEncoderBitRateKey: 64000
+                ]
+                let audioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
+                audioInput.expectsMediaDataInRealTime = true
+                if assetWriter.canAdd(audioInput) {
+                    assetWriter.add(audioInput)
+                    self.writerAudioInput = audioInput
+                }
             }
             
             self.startTime = nil
@@ -212,6 +220,7 @@ final class RecordingManager: NSObject {
 extension RecordingManager: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         if output is AVCaptureAudioDataOutput {
+            guard includeMic else { return }
             guard let writer = writer,
                   writer.status == .writing,
                   let input = writerAudioInput,

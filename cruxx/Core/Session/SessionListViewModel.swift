@@ -8,6 +8,7 @@ final class SessionListViewModel: ObservableObject {
     @Published private(set) var sessions: [ClimbingSessionModel] = []
     private let context = PersistenceController.shared.viewContext
     private var saveObserver: NSObjectProtocol?
+    private var deleteObserver: NSObjectProtocol?
 
     init() {
         loadSessions()
@@ -19,13 +20,27 @@ final class SessionListViewModel: ObservableObject {
             guard let self else { return }
                 Task { @MainActor in
                     self.loadSessions()
-                }
             }
+        }
+
+        deleteObserver = NotificationCenter.default.addObserver(
+            forName: .didDeleteAllSessions,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                self.loadSessions()
+            }
+        }
     }
 
     deinit {
         if let saveObserver {
             NotificationCenter.default.removeObserver(saveObserver)
+        }
+        if let deleteObserver {
+            NotificationCenter.default.removeObserver(deleteObserver)
         }
     }
 
