@@ -31,12 +31,10 @@ struct SessionListView: View {
 
 private struct SessionCard: View {
     let session: ClimbingSessionModel
-    private let thumbnail: UIImage?
+    @State private var thumbnail: UIImage?
 
     init(session: ClimbingSessionModel) {
         self.session = session
-        let url = URL(fileURLWithPath: session.filePath)
-        self.thumbnail = generateThumbnail(from: url)
     }
 
     var body: some View {
@@ -75,6 +73,20 @@ private struct SessionCard: View {
                 .stroke(Color.white.opacity(0.15), lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
+        .onAppear {
+            let key = session.id.uuidString
+            if let cached = ThumbnailCache.shared.get(for: key) {
+                thumbnail = cached
+            } else {
+                let url = URL(fileURLWithPath: session.filePath)
+                generateThumbnailAsync(from: url) { image in
+                    if let image {
+                        ThumbnailCache.shared.set(image, for: key)
+                        thumbnail = image
+                    }
+                }
+            }
+        }
     }
 
     private func dateString(from date: Date) -> String {
@@ -96,6 +108,16 @@ private func generateThumbnail(from url: URL) -> UIImage? {
     } catch {
         print("썸네일 생성 실패: \(error)")
         return nil
+    }
+}
+
+/// 비동기적으로 썸네일을 생성합니다.
+private func generateThumbnailAsync(from url: URL, completion: @escaping (UIImage?) -> Void) {
+    DispatchQueue.global(qos: .userInitiated).async {
+        let image = generateThumbnail(from: url)
+        DispatchQueue.main.async {
+            completion(image)
+        }
     }
 }
 
