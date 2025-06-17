@@ -42,7 +42,9 @@ final class RecordingViewModel: ObservableObject {
         elapsedTimer?.invalidate()
         elapsedTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
             guard let self else { return }
-            self.elapsedTime += 1
+            Task { @MainActor in
+                self.elapsedTime += 1
+            }
         }
     }
 
@@ -80,14 +82,18 @@ final class RecordingViewModel: ObservableObject {
     func stopRecording() {
         recordingManager.stopRecording { [weak self] in
             guard let self else { return }
-            self.isRecording = false
-            self.stopElapsedTimer()
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent("cruxx_temp.mov")
-            let session = ClimbingSession(filename: url.lastPathComponent, date: Date(), fileURL: url)
-            print("Saved session: \(session)")
-            self.showSaveMessage = true
+            Task { @MainActor in
+                self.isRecording = false
+                self.stopElapsedTimer()
+                let url = FileManager.default.temporaryDirectory.appendingPathComponent("cruxx_temp.mov")
+                let session = ClimbingSession(filename: url.lastPathComponent, date: Date(), fileURL: url)
+                print("Saved session: \(session)")
+                self.showSaveMessage = true
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-                self?.showSaveMessage = false
+                Task { @MainActor in
+                    self?.showSaveMessage = false
+                }
             }
         }
     }
