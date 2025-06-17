@@ -8,11 +8,11 @@ final class RecordingManager: NSObject {
     private let sessionQueue = DispatchQueue(label: "RecordingSessionQueue")
     private let videoOutput = AVCaptureVideoDataOutput()
     private let portraitDimensions = (width: 1080, height: 1920)
-
+    
     private var writer: AVAssetWriter?
     private var writerInput: AVAssetWriterInput?
     private var startTime: CMTime?
-
+    
     var previewLayer: AVCaptureVideoPreviewLayer {
         let layer = AVCaptureVideoPreviewLayer(session: session)
         layer.videoGravity = .resizeAspectFill
@@ -27,17 +27,17 @@ final class RecordingManager: NSObject {
         }
         return layer
     }
-
+    
     override init() {
         super.init()
         configureSession()
     }
-
+    
     /// 카메라 세션을 설정합니다.
     private func configureSession() {
         session.beginConfiguration()
         session.sessionPreset = .high
-
+        
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera,
                                                    for: .video,
                                                    position: .back),
@@ -46,14 +46,14 @@ final class RecordingManager: NSObject {
             session.commitConfiguration()
             return
         }
-
+        
         session.addInput(input)
-
+        
         if session.canAddOutput(videoOutput) {
             videoOutput.setSampleBufferDelegate(self, queue: sessionQueue)
             session.addOutput(videoOutput)
         }
-
+        
         if let connection = videoOutput.connection(with: .video) {
             if #available(iOS 17.0, *) {
                 if connection.isVideoRotationAngleSupported(90) {
@@ -63,10 +63,10 @@ final class RecordingManager: NSObject {
                 connection.videoOrientation = .portrait
             }
         }
-
+        
         session.commitConfiguration()
     }
-
+    
     /// 카메라 세션을 시작합니다.
     func startSession() {
         sessionQueue.async {
@@ -75,7 +75,7 @@ final class RecordingManager: NSObject {
             }
         }
     }
-
+    
     /// 카메라 세션을 종료합니다.
     func stopSession() {
         sessionQueue.async {
@@ -84,7 +84,7 @@ final class RecordingManager: NSObject {
             }
         }
     }
-
+    
     /// 녹화를 시작합니다.
     func startRecording() {
         sessionQueue.async {
@@ -94,13 +94,13 @@ final class RecordingManager: NSObject {
                 self.writerInput = nil
                 self.startTime = nil
             }
-
+            
             self.videoOutput.setSampleBufferDelegate(nil, queue: nil)
             self.videoOutput.setSampleBufferDelegate(self, queue: self.sessionQueue)
-
+            
             let url = FileManager.default.temporaryDirectory.appendingPathComponent("cruxx_temp.mov")
             try? FileManager.default.removeItem(at: url)
-
+            
             let assetWriter: AVAssetWriter
             do {
                 assetWriter = try AVAssetWriter(outputURL: url, fileType: .mov)
@@ -108,28 +108,28 @@ final class RecordingManager: NSObject {
                 print("AssetWriter 초기화 실패: \(error.localizedDescription)")
                 return
             }
-
+            
             let settings: [String: Any] = [
                 AVVideoCodecKey: AVVideoCodecType.h264,
                 AVVideoWidthKey: self.portraitDimensions.width,
                 AVVideoHeightKey: self.portraitDimensions.height
             ]
-
+            
             let input = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
             input.expectsMediaDataInRealTime = true
             input.transform = CGAffineTransform(rotationAngle: 0)
-
+            
             if assetWriter.canAdd(input) {
                 assetWriter.add(input)
                 self.writerInput = input
             }
-
+            
             self.startTime = nil
             self.writer = assetWriter
             assetWriter.startWriting()
         }
     }
-
+    
     /// 녹화를 종료하고 파일을 저장합니다.
     func stopRecording(completion: @escaping (String?) -> Void) {
         sessionQueue.async {
@@ -137,13 +137,13 @@ final class RecordingManager: NSObject {
                 DispatchQueue.main.async { completion(nil) }
                 return
             }
-
+            
             input.markAsFinished()
-
+            
             if self.session.isRunning {
                 self.session.stopRunning()
             }
-
+            
             writer.finishWriting { [weak self] in
                 guard let self else { return }
                 let url = writer.outputURL
@@ -158,13 +158,14 @@ final class RecordingManager: NSObject {
             }
         }
     }
-
+    
     /// 완성된 영상을 포토 라이브러리에 저장합니다.
     private func saveVideo(at url: URL, completion: @escaping (String?) -> Void) {
         var identifier: String?
         PHPhotoLibrary.shared().performChanges({
-            let request = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-            identifier = request.placeholderForCreatedAsset?.localIdentifier
+            if let request = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url) {
+                identifier = request.placeholderForCreatedAsset?.localIdentifier
+            }
         }) { saved, error in
             if let error {
                 print("영상 저장 오류: \(error.localizedDescription)")

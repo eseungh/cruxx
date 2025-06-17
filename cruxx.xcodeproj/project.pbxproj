@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		31A5963D2E01BD2A00D67ACB /* cruxx.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 31A5963B2E01BD2A00D67ACB /* cruxx.xcdatamodeld */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		319663582E0183B400D79721 /* cruxx.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cruxx.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		31A5963C2E01BD2A00D67ACB /* cruxx.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = cruxx.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +37,7 @@
 		3196634F2E0183B400D79721 = {
 			isa = PBXGroup;
 			children = (
+				31A5963B2E01BD2A00D67ACB /* cruxx.xcdatamodeld */,
 				3196635A2E0183B400D79721 /* cruxx */,
 				319663592E0183B400D79721 /* Products */,
 			);
@@ -119,6 +125,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31A5963D2E01BD2A00D67ACB /* cruxx.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,6 +358,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		31A5963B2E01BD2A00D67ACB /* cruxx.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				31A5963C2E01BD2A00D67ACB /* cruxx.xcdatamodel */,
+			);
+			currentVersion = 31A5963C2E01BD2A00D67ACB /* cruxx.xcdatamodel */;
+			path = cruxx.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 319663502E0183B400D79721 /* Project object */;
 }
