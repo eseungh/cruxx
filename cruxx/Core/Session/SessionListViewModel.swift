@@ -7,9 +7,23 @@ import CoreData
 final class SessionListViewModel: ObservableObject {
     @Published private(set) var sessions: [ClimbingSessionModel] = []
     private let context = PersistenceController.shared.viewContext
+    private var saveObserver: NSObjectProtocol?
 
     init() {
         loadSessions()
+        saveObserver = NotificationCenter.default.addObserver(
+            forName: .didSaveClimbingSession,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.loadSessions()
+        }
+    }
+
+    deinit {
+        if let saveObserver {
+            NotificationCenter.default.removeObserver(saveObserver)
+        }
     }
 
     /// Core Data에서 세션 데이터를 불러옵니다.
