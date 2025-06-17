@@ -20,17 +20,22 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             TabView {
-                Text("녹화 화면 준비 중입니다.")
+                Text("Home")
+                    .tabItem {
+                        Label("Home", systemImage: "house")
+                    }
+
+                Text("Record")
                     .tabItem {
                         Label("Record", systemImage: "camera")
                     }
 
-                Text("세션 리스트 준비 중입니다.")
+                Text("Sessions")
                     .tabItem {
                         Label("Sessions", systemImage: "list.bullet")
                     }
 
-                Text("설정 화면 준비 중입니다.")
+                Text("Settings")
                     .tabItem {
                         Label("Settings", systemImage: "gearshape")
                     }
