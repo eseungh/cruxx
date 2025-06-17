@@ -4,10 +4,20 @@ import AVFoundation
 /// 라이브 카메라 프리뷰와 녹화 버튼을 제공하는 화면입니다.
 struct RecordingView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = RecordingViewModel()
-    @State private var countdown: Int?
-    @State private var countdownTimer: Timer?
+    @AppStorage("includeMic") private var includeMic = true
+    @AppStorage("countdownSeconds") private var countdownSeconds = 3
+    @AppStorage("autoAnalyze") private var autoAnalyze = true
+
+    @StateObject private var viewModel: RecordingViewModel
     @State private var blink = false
+
+    init() {
+        _viewModel = StateObject(wrappedValue: RecordingViewModel(
+            includeMic: includeMic,
+            countdownSeconds: countdownSeconds,
+            autoAnalyze: autoAnalyze
+        ))
+    }
 
     var body: some View {
         ZStack {
@@ -66,8 +76,8 @@ struct RecordingView: View {
                 Button(action: {
                     if viewModel.isRecording {
                         viewModel.stopRecording()
-                    } else if countdown == nil {
-                        startCountdown()
+                    } else if viewModel.countdown == nil {
+                        viewModel.startRecording()
                     }
                 }) {
                     Circle()
@@ -79,12 +89,12 @@ struct RecordingView: View {
                         )
                         .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
                 }
-                .disabled(countdown != nil)
+                .disabled(viewModel.countdown != nil)
                 .padding(.bottom, 40)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
 
-            if let remaining = countdown {
+            if let remaining = viewModel.countdown {
                 Text("\(remaining)")
                     .font(.system(size: 60, weight: .bold))
                     .foregroundColor(.white)
@@ -123,23 +133,6 @@ struct RecordingView: View {
         }
         .onDisappear {
             viewModel.stopSession()
-        }
-    }
-
-    private func startCountdown() {
-        countdown = 3
-        countdownTimer?.invalidate()
-        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-            guard let current = countdown else { return }
-            if current > 1 {
-                countdown = current - 1
-            } else {
-                timer.invalidate()
-                countdown = nil
-                Task { @MainActor in
-                    viewModel.startRecording()
-                }
-            }
         }
     }
 
