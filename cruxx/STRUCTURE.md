@@ -1,11 +1,13 @@
-cruxx 프로젝트 파일/폴더 구조 및 역할 (Xcode + Xcode 기준)
 
-“본 프로젝트는 Xcode 프로젝트(cruxx.xcodeproj) 기반 구조합니다.”
+cruxx 프로젝트 파일/폴더 구조 및 역할 (Xcode 기반)
+
+“본 프로젝트는 Xcode 프로젝트(cruxx.xcodeproj)를 루트로 사용하며, 실제 소스 파일은 하위 cruxx/ 디렉토리에 위치합니다.”
 
 [구조 목적]
-	•	SwiftUI 기반 UI는 cruxxApp 모듈에 격리
-	•	테스트 및 로직은 cruxxCore 모듈 내에서 SwiftUI 없이 수행
-	•	데이터 모델은 cruxxModel로 분리, 경량화 및 공유 목적
+• SwiftUI 기반 UI는 App 폴더에 격리
+• 비즈니스 로직 및 뷰모델은 Core 폴더에 위치
+• 공통 모델 및 데이터 구조는 Model에 분리
+• 테스트는 Tests 폴더에서 각 책임 단위별로 수행
 
 ⸻
 
@@ -14,15 +16,18 @@ cruxx 프로젝트 파일/폴더 구조 및 역할 (Xcode + Xcode 기준)
 cruxx.xcodeproj/
 → Xcode 프로젝트 파일 (앱 실행 및 구조 관리 중심)
 
+cruxx/
+→ 실제 소스 코드가 위치한 폴더 (App, Core, Model, Resources 등 포함)
+
 ⸻
 
-[App] – SwiftUI 기반 UI 계층
+[cruxx/App] – SwiftUI 기반 UI 계층
 
-ClerApp.swift
+cruxxApp.swift
 → 앱 진입점, DIContainer 주입
 
-AppRouter.swift
-→ 탭 기반 메인 네비게이션
+ContentView.swift
+→ 메인 탭 화면
 
 Features/Recording/RecordingView.swift
 → 녹화 화면 UI 및 프리뷰
@@ -38,7 +43,7 @@ Shared/Extensions/*.swift
 
 ⸻
 
-[Core] – 비즈니스 로직 / 테스트 대상 계층
+[cruxx/Core] – 비즈니스 로직 / 테스트 대상 계층
 
 Recording/RecordingManager.swift
 → AVFoundation 기반 녹화 세션 제어
@@ -63,7 +68,7 @@ Utils/Constants.swift
 
 ⸻
 
-[Model] – 공통 데이터 모델 정의
+[cruxx/Model] – 공통 데이터 모델 정의
 
 ClimbingSession.swift
 → 등반 세션 구조
@@ -100,6 +105,9 @@ PoseAnalyzerTests.swift
 Assets.xcassets/
 → 아이콘, 색상 등 앱 리소스
 
+Resources/
+→ background 이미지 등 외부 자산
+
 Preview/MockData.swift
 → SwiftUI Preview용 더미 데이터
 
@@ -117,5 +125,8 @@ AGENTS.md
 
 ⸻
 
-위 구조는 SwiftUI 제거, 테스트 가능성 확보, 계층 경계 명확화를 목표로 설계됨.
-Codex 및 협업 툴 사용 시 혼동 없도록 구조적 기준으로 고정.
+📌 Codex 또는 에이전트 작업 시 주의사항:
+
+> 모든 실제 소스 경로는 `cruxx/` 폴더 하위(App, Core, Model 등)를 기준으로 작업해야 하며,  
+> 루트 디렉토리에서 파일을 생성하거나 수정해서는 안 됩니다.  
+> 이 구조는 협업 및 자동화 도구와의 일관성을 위해 고정됩니다.
