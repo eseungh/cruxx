@@ -35,7 +35,7 @@ struct ContentView: View {
                     Label("Home", systemImage: "house")
                 }
 
-                Text("Sessions")
+                SessionListView()
                     .tabItem {
                         Label("Sessions", systemImage: "list.bullet")
                     }
