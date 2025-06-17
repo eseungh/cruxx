@@ -117,7 +117,7 @@ final class RecordingManager: NSObject {
 
             let input = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
             input.expectsMediaDataInRealTime = true
-            input.transform = CGAffineTransform(rotationAngle: .pi / 2)
+            input.transform = CGAffineTransform(rotationAngle: 0)
 
             if assetWriter.canAdd(input) {
                 assetWriter.add(input)
