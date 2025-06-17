@@ -7,10 +7,12 @@ final class RecordingManager: NSObject {
     let session = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "RecordingSessionQueue")
     private let videoOutput = AVCaptureVideoDataOutput()
+    private let audioOutput = AVCaptureAudioDataOutput()
     private let portraitDimensions = (width: 1080, height: 1920)
 
     private var writer: AVAssetWriter?
     private var writerInput: AVAssetWriterInput?
+    private var writerAudioInput: AVAssetWriterInput?
     private var startTime: CMTime?
     private var outputURL: URL?
 
@@ -53,12 +55,24 @@ final class RecordingManager: NSObject {
             session.commitConfiguration()
             return
         }
-        
+
         session.addInput(input)
+
+        // 마이크 입력을 세션에 추가합니다.
+        if let audioDevice = AVCaptureDevice.default(for: .audio),
+           let audioInput = try? AVCaptureDeviceInput(device: audioDevice),
+           session.canAddInput(audioInput) {
+            session.addInput(audioInput)
+        }
         
         if session.canAddOutput(videoOutput) {
             videoOutput.setSampleBufferDelegate(self, queue: sessionQueue)
             session.addOutput(videoOutput)
+        }
+
+        if session.canAddOutput(audioOutput) {
+            audioOutput.setSampleBufferDelegate(self, queue: sessionQueue)
+            session.addOutput(audioOutput)
         }
         
         if let connection = videoOutput.connection(with: .video) {
@@ -76,6 +90,8 @@ final class RecordingManager: NSObject {
     
     /// 카메라 세션을 시작합니다.
     func startSession() {
+        // 마이크 권한을 요청합니다.
+        AVCaptureDevice.requestAccess(for: .audio) { _ in }
         sessionQueue.async {
             if !self.session.isRunning {
                 self.session.startRunning()
@@ -99,11 +115,14 @@ final class RecordingManager: NSObject {
                writer.status == .failed || writer.status == .completed {
                 self.writer = nil
                 self.writerInput = nil
+                self.writerAudioInput = nil
                 self.startTime = nil
             }
-            
+
             self.videoOutput.setSampleBufferDelegate(nil, queue: nil)
             self.videoOutput.setSampleBufferDelegate(self, queue: self.sessionQueue)
+            self.audioOutput.setSampleBufferDelegate(nil, queue: nil)
+            self.audioOutput.setSampleBufferDelegate(self, queue: self.sessionQueue)
             
             let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let rawDir = documents.appendingPathComponent("raw", isDirectory: true)
@@ -130,10 +149,23 @@ final class RecordingManager: NSObject {
             let input = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
             input.expectsMediaDataInRealTime = true
             input.transform = CGAffineTransform(rotationAngle: 0)
-            
+
             if assetWriter.canAdd(input) {
                 assetWriter.add(input)
                 self.writerInput = input
+            }
+
+            let audioSettings: [String: Any] = [
+                AVFormatIDKey: kAudioFormatMPEG4AAC,
+                AVNumberOfChannelsKey: 1,
+                AVSampleRateKey: 44100,
+                AVEncoderBitRateKey: 64000
+            ]
+            let audioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: audioSettings)
+            audioInput.expectsMediaDataInRealTime = true
+            if assetWriter.canAdd(audioInput) {
+                assetWriter.add(audioInput)
+                self.writerAudioInput = audioInput
             }
             
             self.startTime = nil
@@ -149,8 +181,11 @@ final class RecordingManager: NSObject {
                 DispatchQueue.main.async { completion(nil) }
                 return
             }
-            
+
             input.markAsFinished()
+            self.writerAudioInput?.markAsFinished()
+            self.videoOutput.setSampleBufferDelegate(nil, queue: nil)
+            self.audioOutput.setSampleBufferDelegate(nil, queue: nil)
             
             if self.session.isRunning {
                 self.session.stopRunning()
@@ -161,6 +196,7 @@ final class RecordingManager: NSObject {
                 let url = writer.outputURL
                 self.writer = nil
                 self.writerInput = nil
+                self.writerAudioInput = nil
                 self.startTime = nil
                 // 녹화 정리 후 프리뷰 재시작
                 self.startSession()
@@ -173,8 +209,22 @@ final class RecordingManager: NSObject {
 
 }
 
-extension RecordingManager: AVCaptureVideoDataOutputSampleBufferDelegate {
+extension RecordingManager: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        if output is AVCaptureAudioDataOutput {
+            guard let writer = writer,
+                  writer.status == .writing,
+                  let input = writerAudioInput,
+                  input.isReadyForMoreMediaData else { return }
+
+            if startTime == nil {
+                startTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+                writer.startSession(atSourceTime: startTime!)
+            }
+            input.append(sampleBuffer)
+            return
+        }
+
         if #available(iOS 17.0, *) {
             if connection.isVideoRotationAngleSupported(90) {
                 connection.videoRotationAngle = 90
@@ -183,9 +233,10 @@ extension RecordingManager: AVCaptureVideoDataOutputSampleBufferDelegate {
             connection.videoOrientation = .portrait
         }
 
-        guard let writer = writer, writer.status == .writing, let input = writerInput, input.isReadyForMoreMediaData else {
-            return
-        }
+        guard let writer = writer,
+              writer.status == .writing,
+              let input = writerInput,
+              input.isReadyForMoreMediaData else { return }
 
         if startTime == nil {
             startTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
