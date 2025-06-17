@@ -7,7 +7,7 @@ struct RecordingView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            CameraPreviewView(layer: viewModel.previewLayer)
+            CameraPreviewView(session: viewModel.session)
                 .ignoresSafeArea()
 
             Button(action: {
@@ -23,31 +23,12 @@ struct RecordingView: View {
             }
             .padding(.bottom, 40)
         }
-    }
-}
-
-/// AVCaptureVideoPreviewLayer를 SwiftUI에서 사용하기 위한 래퍼입니다.
-struct CameraPreviewView: UIViewRepresentable {
-    let layer: AVCaptureVideoPreviewLayer
-
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: .zero)
-        layer.videoGravity = .resizeAspectFill
-        if let connection = layer.connection {
-            if #available(iOS 17.0, *) {
-                if connection.isVideoRotationAngleSupported(90) {
-                    connection.videoRotationAngle = 90
-                }
-            } else if connection.isVideoOrientationSupported {
-                connection.videoOrientation = .portrait
-            }
+        .onAppear {
+            viewModel.startSession()
         }
-        view.layer.addSublayer(layer)
-        return view
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {
-        layer.frame = uiView.bounds
+        .onDisappear {
+            viewModel.stopSession()
+        }
     }
 }
 
