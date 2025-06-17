@@ -88,11 +88,22 @@ final class RecordingManager: NSObject {
     /// 녹화를 시작합니다.
     func startRecording() {
         sessionQueue.async {
+            if let writer = self.writer,
+               writer.status == .failed || writer.status == .completed {
+                self.writer = nil
+                self.writerInput = nil
+                self.startTime = nil
+            }
+
+            self.videoOutput.setSampleBufferDelegate(nil, queue: nil)
+            self.videoOutput.setSampleBufferDelegate(self, queue: self.sessionQueue)
+
             let url = FileManager.default.temporaryDirectory.appendingPathComponent("cruxx_temp.mov")
             try? FileManager.default.removeItem(at: url)
 
+            let assetWriter: AVAssetWriter
             do {
-                self.writer = try AVAssetWriter(outputURL: url, fileType: .mov)
+                assetWriter = try AVAssetWriter(outputURL: url, fileType: .mov)
             } catch {
                 print("AssetWriter 초기화 실패: \(error.localizedDescription)")
                 return
@@ -108,13 +119,14 @@ final class RecordingManager: NSObject {
             input.expectsMediaDataInRealTime = true
             input.transform = CGAffineTransform(rotationAngle: .pi / 2)
 
-            if let writer = self.writer, writer.canAdd(input) {
-                writer.add(input)
+            if assetWriter.canAdd(input) {
+                assetWriter.add(input)
                 self.writerInput = input
             }
 
             self.startTime = nil
-            self.writer?.startWriting()
+            self.writer = assetWriter
+            assetWriter.startWriting()
         }
     }
 
@@ -135,10 +147,11 @@ final class RecordingManager: NSObject {
             writer.finishWriting { [weak self] in
                 guard let self else { return }
                 let url = writer.outputURL
+                self.writer = nil
+                self.writerInput = nil
+                self.startTime = nil
                 DispatchQueue.main.async {
                     self.saveVideo(at: url)
-                    self.writer = nil
-                    self.writerInput = nil
                     completion()
                 }
             }
