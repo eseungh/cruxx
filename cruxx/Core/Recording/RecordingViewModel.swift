@@ -1,11 +1,55 @@
 import Foundation
 import AVFoundation
+import UIKit
 
 /// 녹화 상태와 액션을 관리하는 뷰모델입니다.
 @MainActor
 final class RecordingViewModel: ObservableObject {
     @Published private(set) var isRecording: Bool = false
+    @Published var elapsedTime: TimeInterval = 0
+    @Published var showSaveMessage: Bool = false
     private let recordingManager = RecordingManager()
+    private var elapsedTimer: Timer?
+    private var backgroundObserver: NSObjectProtocol?
+
+    struct ClimbingSession {
+        let filename: String
+        let date: Date
+        let fileURL: URL
+    }
+
+    init() {
+        backgroundObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.willResignActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            if self.isRecording {
+                self.stopRecording()
+            }
+        }
+    }
+
+    deinit {
+        if let observer = backgroundObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+
+    private func startElapsedTimer() {
+        elapsedTime = 0
+        elapsedTimer?.invalidate()
+        elapsedTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            self.elapsedTime += 1
+        }
+    }
+
+    private func stopElapsedTimer() {
+        elapsedTimer?.invalidate()
+        elapsedTimer = nil
+    }
 
     var session: AVCaptureSession {
         recordingManager.session
@@ -29,12 +73,22 @@ final class RecordingViewModel: ObservableObject {
     func startRecording() {
         recordingManager.startRecording()
         isRecording = true
+        startElapsedTimer()
     }
 
     /// 녹화를 종료합니다.
     func stopRecording() {
         recordingManager.stopRecording { [weak self] in
-            self?.isRecording = false
+            guard let self else { return }
+            self.isRecording = false
+            self.stopElapsedTimer()
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent("cruxx_temp.mov")
+            let session = ClimbingSession(filename: url.lastPathComponent, date: Date(), fileURL: url)
+            print("Saved session: \(session)")
+            self.showSaveMessage = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+                self?.showSaveMessage = false
+            }
         }
     }
 }
