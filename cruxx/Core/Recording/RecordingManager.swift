@@ -126,12 +126,18 @@ final class RecordingManager: NSObject {
             }
 
             input.markAsFinished()
-            writer.finishWriting {
+
+            if self.session.isRunning {
+                self.session.stopRunning()
+            }
+
+            writer.finishWriting { [weak self] in
+                guard let self else { return }
                 let url = writer.outputURL
-                self.saveVideo(at: url)
-                self.writer = nil
-                self.writerInput = nil
                 DispatchQueue.main.async {
+                    self.saveVideo(at: url)
+                    self.writer = nil
+                    self.writerInput = nil
                     completion()
                 }
             }
@@ -140,13 +146,17 @@ final class RecordingManager: NSObject {
 
     /// 완성된 영상을 포토 라이브러리에 저장합니다.
     private func saveVideo(at url: URL) {
-        PHPhotoLibrary.shared().performChanges({
-            PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-        }) { saved, error in
-            if let error = error {
-                print("영상 저장 오류: \(error.localizedDescription)")
+        DispatchQueue.main.async {
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+            }) { saved, error in
+                if let error = error {
+                    print("영상 저장 오류: \(error.localizedDescription)")
+                }
+                DispatchQueue.global(qos: .background).async {
+                    try? FileManager.default.removeItem(at: url)
+                }
             }
-            try? FileManager.default.removeItem(at: url)
         }
     }
 }
