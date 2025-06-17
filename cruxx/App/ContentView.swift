@@ -25,7 +25,7 @@ struct ContentView: View {
                         Label("Home", systemImage: "house")
                     }
 
-                Text("Record")
+                RecordingView()
                     .tabItem {
                         Label("Record", systemImage: "camera")
                     }

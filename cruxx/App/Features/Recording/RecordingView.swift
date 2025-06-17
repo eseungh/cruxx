@@ -6,32 +6,41 @@ struct RecordingView: View {
     @StateObject private var viewModel = RecordingViewModel()
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            CameraPreview(layer: viewModel.previewLayer)
+        ZStack {
+            CameraPreviewView(layer: viewModel.previewLayer)
                 .ignoresSafeArea()
 
-            HStack {
-                if viewModel.isRecording {
-                    Button(action: { viewModel.stopRecording() }) {
+            VStack {
+                Spacer()
+
+                VStack(spacing: 16) {
+                    Text(viewModel.isRecording ? "Recording..." : "Ready")
+                        .font(.headline)
+                        .foregroundColor(.white)
+
+                    Button(action: {
+                        if viewModel.isRecording {
+                            viewModel.stopRecording()
+                        } else {
+                            viewModel.startRecording()
+                        }
+                    }) {
                         Circle()
-                            .fill(Color.gray)
-                            .frame(width: 70, height: 70)
-                    }
-                } else {
-                    Button(action: { viewModel.startRecording() }) {
-                        Circle()
-                            .fill(Color.red)
+                            .fill(viewModel.isRecording ? Color.gray : Color.red)
                             .frame(width: 70, height: 70)
                     }
                 }
+                .padding(24)
+                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 25))
+                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 5)
+                .padding(.bottom, 32)
             }
-            .padding(.bottom, 32)
         }
     }
 }
 
 /// AVCaptureVideoPreviewLayer를 SwiftUI에서 사용하기 위한 래퍼입니다.
-struct CameraPreview: UIViewRepresentable {
+struct CameraPreviewView: UIViewRepresentable {
     let layer: AVCaptureVideoPreviewLayer
 
     func makeUIView(context: Context) -> UIView {
