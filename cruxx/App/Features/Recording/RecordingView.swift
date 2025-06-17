@@ -10,18 +10,9 @@ struct RecordingView: View {
     @State private var blink = false
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             CameraPreviewView(session: viewModel.session)
                 .ignoresSafeArea()
-
-            if let remaining = countdown {
-                Text("\(remaining)")
-                    .font(.system(size: 60, weight: .bold))
-                    .foregroundColor(.white)
-                    .padding(40)
-                    .background(Color.black.opacity(0.5))
-                    .clipShape(Circle())
-            }
 
             VStack {
                 if viewModel.isRecording {
@@ -37,6 +28,17 @@ struct RecordingView: View {
                             .font(.headline)
                             .foregroundColor(.white)
                     }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        .ultraThinMaterial,
+                        in: RoundedRectangle(cornerRadius: 12)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
                     .padding(.top, 16)
                     .frame(maxWidth: .infinity, alignment: .top)
                 }
@@ -45,10 +47,18 @@ struct RecordingView: View {
 
                 if viewModel.showSaveMessage {
                     Text("Recording saved!")
-                        .padding(8)
-                        .background(Color.black.opacity(0.6))
                         .foregroundColor(.white)
-                        .cornerRadius(8)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(
+                            .ultraThinMaterial,
+                            in: RoundedRectangle(cornerRadius: 12)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                        )
+                        .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
                         .transition(.opacity)
                         .padding(.bottom, 80)
                 }
@@ -63,9 +73,28 @@ struct RecordingView: View {
                     Circle()
                         .fill(viewModel.isRecording ? Color.gray : Color.red)
                         .frame(width: 80, height: 80)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                        )
+                        .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
                 }
                 .disabled(countdown != nil)
                 .padding(.bottom, 40)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+
+            if let remaining = countdown {
+                Text("\(remaining)")
+                    .font(.system(size: 60, weight: .bold))
+                    .foregroundColor(.white)
+                    .padding(40)
+                    .background(.ultraThinMaterial, in: Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
             }
         }
         .overlay(alignment: .topLeading) {
@@ -76,8 +105,15 @@ struct RecordingView: View {
                     .font(.system(size: 24))
                     .foregroundColor(.white)
                     .padding(8)
-                    .background(Color.black.opacity(0.6))
-                    .clipShape(Circle())
+                    .background(
+                        .ultraThinMaterial,
+                        in: Circle()
+                    )
+                    .overlay(
+                        Circle()
+                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
             }
             .padding(.top, 60)
             .padding(.leading, 16)
