@@ -100,8 +100,8 @@ final class RecordingManager: NSObject {
 
             let settings: [String: Any] = [
                 AVVideoCodecKey: AVVideoCodecType.h264,
-                AVVideoWidthKey: portraitDimensions.width,
-                AVVideoHeightKey: portraitDimensions.height
+                AVVideoWidthKey: self.portraitDimensions.width,
+                AVVideoHeightKey: self.portraitDimensions.height
             ]
 
             let input = AVAssetWriterInput(mediaType: .video, outputSettings: settings)

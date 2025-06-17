@@ -25,8 +25,10 @@ final class RecordingViewModel: ObservableObject {
             queue: .main
         ) { [weak self] _ in
             guard let self else { return }
-            if self.isRecording {
-                self.stopRecording()
+            Task { @MainActor in
+                if self.isRecording {
+                    self.stopRecording()
+                }
             }
         }
     }

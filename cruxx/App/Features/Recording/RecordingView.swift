@@ -85,7 +85,9 @@ struct RecordingView: View {
             } else {
                 timer.invalidate()
                 countdown = nil
-                viewModel.startRecording()
+                Task { @MainActor in
+                    viewModel.startRecording()
+                }
             }
         }
     }
