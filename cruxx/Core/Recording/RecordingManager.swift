@@ -7,6 +7,7 @@ final class RecordingManager: NSObject {
     let session = AVCaptureSession()
     private let sessionQueue = DispatchQueue(label: "RecordingSessionQueue")
     private let videoOutput = AVCaptureVideoDataOutput()
+    private let portraitDimensions = (width: 1080, height: 1920)
 
     private var writer: AVAssetWriter?
     private var writerInput: AVAssetWriterInput?
@@ -99,8 +100,8 @@ final class RecordingManager: NSObject {
 
             let settings: [String: Any] = [
                 AVVideoCodecKey: AVVideoCodecType.h264,
-                AVVideoWidthKey: 1080,
-                AVVideoHeightKey: 1920
+                AVVideoWidthKey: portraitDimensions.width,
+                AVVideoHeightKey: portraitDimensions.height
             ]
 
             let input = AVAssetWriterInput(mediaType: .video, outputSettings: settings)
