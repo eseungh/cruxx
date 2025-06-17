@@ -13,20 +13,23 @@ struct SessionListView: View {
     ]
 
     var body: some View {
-        ScrollView {
-            if viewModel.sessions.isEmpty {
-                Text("No sessions saved yet.")
-                    .foregroundColor(.white.opacity(0.7))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                LazyVGrid(columns: columns, spacing: 16) {
-                    ForEach(viewModel.sessions) { session in
-                        SessionCard(session: session)
-                            .environmentObject(viewModel)
+        NavigationStack {
+            ScrollView {
+                if viewModel.sessions.isEmpty {
+                    Text("No sessions saved yet.")
+                        .foregroundColor(.white.opacity(0.7))
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(viewModel.sessions) { session in
+                            SessionCard(session: session)
+                                .environmentObject(viewModel)
+                        }
                     }
+                    .padding()
                 }
-                .padding()
             }
+            .navigationTitle("Sessions")
         }
     }
 }
@@ -44,12 +47,15 @@ private struct SessionCard: View {
     }
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading, spacing: 8) {
-                if let thumbnail {
-                    Image(uiImage: thumbnail)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
+        NavigationLink {
+            SessionDetailView(session: session)
+        } label: {
+            ZStack(alignment: .topTrailing) {
+                VStack(alignment: .leading, spacing: 8) {
+                    if let thumbnail {
+                        Image(uiImage: thumbnail)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
                         .frame(height: 180)
                         .clipped()
                 } else {
@@ -90,12 +96,14 @@ private struct SessionCard: View {
                     .foregroundColor(.white)
                     .padding(8)
                     .background(Color.black.opacity(0.5))
-                    .clipShape(Circle())
+                        .clipShape(Circle())
+                }
+                .opacity(isDeleteVisible ? 1 : 0)
+                .animation(.easeInOut, value: isDeleteVisible)
+                .transition(.opacity.combined(with: .scale))
             }
-            .opacity(isDeleteVisible ? 1 : 0)
-            .animation(.easeInOut, value: isDeleteVisible)
-            .transition(.opacity.combined(with: .scale))
         }
+        .buttonStyle(.plain)
         .gesture(
             LongPressGesture().onEnded { _ in
                 withAnimation {
@@ -107,12 +115,6 @@ private struct SessionCard: View {
         .alert("세션을 삭제하시겠습니까?", isPresented: $showDeleteAlert) {
             Button("삭제", role: .destructive) { deleteSession() }
             Button("취소", role: .cancel) {}
-        }
-        .onTapGesture {
-            if isDeleteVisible {
-                withAnimation { isDeleteVisible = false }
-                hideTask?.cancel()
-            }
         }
         .onAppear {
             let key = session.id.uuidString
