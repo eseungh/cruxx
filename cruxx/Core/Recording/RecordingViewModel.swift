@@ -9,13 +9,24 @@ final class RecordingViewModel: ObservableObject {
     @Published private(set) var isRecording: Bool = false
     @Published var elapsedTime: TimeInterval = 0
     @Published var showSaveMessage: Bool = false
-    var autoAnalyzeAfterRecording: Bool = false
-    private let recordingManager = RecordingManager()
+    @Published var countdown: Int?
+
+    private let includeMic: Bool
+    private let countdownSeconds: Int
+    private let autoAnalyze: Bool
+
+    private let recordingManager: RecordingManager
     private var elapsedTimer: Timer?
+    private var countdownTimer: Timer?
     private var backgroundObserver: NSObjectProtocol?
     private let context = PersistenceController.shared.viewContext
 
-    init() {
+    init(includeMic: Bool, countdownSeconds: Int, autoAnalyze: Bool) {
+        self.includeMic = includeMic
+        self.countdownSeconds = countdownSeconds
+        self.autoAnalyze = autoAnalyze
+        self.recordingManager = RecordingManager(includeMic: includeMic)
+
         backgroundObserver = NotificationCenter.default.addObserver(
             forName: UIApplication.willResignActiveNotification,
             object: nil,
@@ -34,6 +45,7 @@ final class RecordingViewModel: ObservableObject {
         if let observer = backgroundObserver {
             NotificationCenter.default.removeObserver(observer)
         }
+        countdownTimer?.invalidate()
     }
 
     private func startElapsedTimer() {
@@ -70,8 +82,31 @@ final class RecordingViewModel: ObservableObject {
         recordingManager.stopSession()
     }
 
-    /// 녹화를 시작합니다.
+    /// 녹화를 시작합니다. 카운트다운이 설정된 경우 카운트다운 후 시작합니다.
     func startRecording() {
+        if countdownSeconds > 0 {
+            countdown = countdownSeconds
+            countdownTimer?.invalidate()
+            countdownTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+                guard let self else { return }
+                Task { @MainActor in
+                    guard let remaining = self.countdown else { return }
+                    if remaining > 1 {
+                        self.countdown = remaining - 1
+                    } else {
+                        timer.invalidate()
+                        self.countdown = nil
+                        self.startActualRecording()
+                    }
+                }
+            }
+        } else {
+            startActualRecording()
+        }
+    }
+
+    /// 실제 녹화 로직을 수행합니다.
+    private func startActualRecording() {
         recordingManager.startRecording()
         isRecording = true
         startElapsedTimer()
@@ -79,6 +114,8 @@ final class RecordingViewModel: ObservableObject {
 
     /// 녹화를 종료합니다.
     func stopRecording() {
+        countdownTimer?.invalidate()
+        countdownTimer = nil
         recordingManager.stopRecording { [weak self] path in
             guard let self else { return }
             Task { @MainActor in
@@ -95,6 +132,9 @@ final class RecordingViewModel: ObservableObject {
                     )
                     self.insertSession(session)
                     print("Saved session: \(session)")
+                    if self.autoAnalyze {
+                        self.runAutoAnalyze(url: url)
+                    }
                 }
                 self.showSaveMessage = true
             }
@@ -124,5 +164,11 @@ final class RecordingViewModel: ObservableObject {
         } catch {
             print("세션 저장 실패: \(error)")
         }
+    }
+
+    /// 녹화 파일에 대해 자동 분석을 실행합니다. 실제 분석 로직은 추후 구현됩니다.
+    private func runAutoAnalyze(url: URL) {
+        // TODO: PoseAnalyzer 연동 예정
+        print("자동 분석 시작: \(url.lastPathComponent)")
     }
 }
