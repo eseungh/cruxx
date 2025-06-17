@@ -40,10 +40,12 @@ struct ContentView: View {
                         Label("Sessions", systemImage: "list.bullet")
                     }
 
-                Text("Settings")
-                    .tabItem {
-                        Label("Settings", systemImage: "gearshape")
-                    }
+                NavigationStack {
+                    SettingsView()
+                }
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape")
+                }
             }
             .fullScreenCover(isPresented: $showRecordingView) {
                 RecordingView()

@@ -5,6 +5,8 @@ import AVFoundation
 struct RecordingView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = RecordingViewModel()
+    @AppStorage("countdownSeconds") private var countdownSeconds: Int = 3
+    @AppStorage("autoAnalyze") private var autoAnalyze: Bool = false
     @State private var countdown: Int?
     @State private var countdownTimer: Timer?
     @State private var blink = false
@@ -127,7 +129,12 @@ struct RecordingView: View {
     }
 
     private func startCountdown() {
-        countdown = 3
+        guard countdownSeconds > 0 else {
+            viewModel.autoAnalyzeAfterRecording = autoAnalyze
+            viewModel.startRecording()
+            return
+        }
+        countdown = countdownSeconds
         countdownTimer?.invalidate()
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             guard let current = countdown else { return }
@@ -137,6 +144,7 @@ struct RecordingView: View {
                 timer.invalidate()
                 countdown = nil
                 Task { @MainActor in
+                    viewModel.autoAnalyzeAfterRecording = autoAnalyze
                     viewModel.startRecording()
                 }
             }
