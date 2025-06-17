@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 /// 저장된 세션 영상을 카드 형태로 나열하는 화면입니다.
 struct SessionListView: View {
@@ -27,7 +28,7 @@ struct SessionListView: View {
 }
 
 private struct SessionCard: View {
-    let session: SessionListViewModel.ClimbingSession
+    let session: ClimbingSession
     private let randomHeight: CGFloat = .random(in: 180...260)
 
     var body: some View {

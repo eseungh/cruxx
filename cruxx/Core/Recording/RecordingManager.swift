@@ -131,10 +131,10 @@ final class RecordingManager: NSObject {
     }
 
     /// 녹화를 종료하고 파일을 저장합니다.
-    func stopRecording(completion: @escaping () -> Void) {
+    func stopRecording(completion: @escaping (String?) -> Void) {
         sessionQueue.async {
             guard let writer = self.writer, let input = self.writerInput else {
-                DispatchQueue.main.async { completion() }
+                DispatchQueue.main.async { completion(nil) }
                 return
             }
 
@@ -151,26 +151,28 @@ final class RecordingManager: NSObject {
                 self.writerInput = nil
                 self.startTime = nil
                 DispatchQueue.main.async {
-                    self.saveVideo(at: url)
-                    completion()
+                    self.saveVideo(at: url) { identifier in
+                        completion(identifier)
+                    }
                 }
             }
         }
     }
 
     /// 완성된 영상을 포토 라이브러리에 저장합니다.
-    private func saveVideo(at url: URL) {
-        DispatchQueue.main.async {
-            PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-            }) { saved, error in
-                if let error = error {
-                    print("영상 저장 오류: \(error.localizedDescription)")
-                }
-                DispatchQueue.global(qos: .background).async {
-                    try? FileManager.default.removeItem(at: url)
-                }
+    private func saveVideo(at url: URL, completion: @escaping (String?) -> Void) {
+        var identifier: String?
+        PHPhotoLibrary.shared().performChanges({
+            let request = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+            identifier = request.placeholderForCreatedAsset?.localIdentifier
+        }) { saved, error in
+            if let error {
+                print("영상 저장 오류: \(error.localizedDescription)")
             }
+            DispatchQueue.global(qos: .background).async {
+                try? FileManager.default.removeItem(at: url)
+            }
+            completion(saved ? identifier : nil)
         }
     }
 }
