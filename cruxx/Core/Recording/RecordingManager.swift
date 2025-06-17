@@ -150,6 +150,8 @@ final class RecordingManager: NSObject {
                 self.writer = nil
                 self.writerInput = nil
                 self.startTime = nil
+                // 녹화 정리 후 프리뷰 재시작
+                self.startSession()
                 DispatchQueue.main.async {
                     self.saveVideo(at: url) { identifier in
                         completion(identifier)
