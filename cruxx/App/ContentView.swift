@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var showRecordingView = false
+
     init() {
         UITabBar.appearance().backgroundColor = .clear
     }
@@ -20,15 +22,18 @@ struct ContentView: View {
                 .ignoresSafeArea()
 
             TabView {
-                Text("Home")
-                    .tabItem {
-                        Label("Home", systemImage: "house")
+                VStack {
+                    Spacer()
+                    Button("Start Recording") {
+                        showRecordingView = true
                     }
-
-                RecordingView()
-                    .tabItem {
-                        Label("Record", systemImage: "camera")
-                    }
+                    .font(.title2)
+                    .padding()
+                    Spacer()
+                }
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
 
                 Text("Sessions")
                     .tabItem {
@@ -39,6 +44,9 @@ struct ContentView: View {
                     .tabItem {
                         Label("Settings", systemImage: "gearshape")
                     }
+            }
+            .fullScreenCover(isPresented: $showRecordingView) {
+                RecordingView()
             }
             .padding(.bottom, 24)
             .background(
