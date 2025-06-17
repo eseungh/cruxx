@@ -1,6 +1,6 @@
 import Foundation
 import AVFoundation
-import Photos
+
 
 /// AVFoundation을 이용해 카메라 세션과 녹화를 관리합니다.
 final class RecordingManager: NSObject {
@@ -8,10 +8,17 @@ final class RecordingManager: NSObject {
     private let sessionQueue = DispatchQueue(label: "RecordingSessionQueue")
     private let videoOutput = AVCaptureVideoDataOutput()
     private let portraitDimensions = (width: 1080, height: 1920)
-    
+
     private var writer: AVAssetWriter?
     private var writerInput: AVAssetWriterInput?
     private var startTime: CMTime?
+    private var outputURL: URL?
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd_HHmm"
+        return formatter
+    }()
     
     var previewLayer: AVCaptureVideoPreviewLayer {
         let layer = AVCaptureVideoPreviewLayer(session: session)
@@ -98,8 +105,13 @@ final class RecordingManager: NSObject {
             self.videoOutput.setSampleBufferDelegate(nil, queue: nil)
             self.videoOutput.setSampleBufferDelegate(self, queue: self.sessionQueue)
             
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent("cruxx_temp.mov")
+            let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let rawDir = documents.appendingPathComponent("raw", isDirectory: true)
+            try? FileManager.default.createDirectory(at: rawDir, withIntermediateDirectories: true)
+            let timestamp = Self.dateFormatter.string(from: Date())
+            let url = rawDir.appendingPathComponent("session_\(timestamp).mov")
             try? FileManager.default.removeItem(at: url)
+            self.outputURL = url
             
             let assetWriter: AVAssetWriter
             do {
@@ -153,31 +165,12 @@ final class RecordingManager: NSObject {
                 // 녹화 정리 후 프리뷰 재시작
                 self.startSession()
                 DispatchQueue.main.async {
-                    self.saveVideo(at: url) { identifier in
-                        completion(identifier)
-                    }
+                    completion(url.path)
                 }
             }
         }
     }
-    
-    /// 완성된 영상을 포토 라이브러리에 저장합니다.
-    private func saveVideo(at url: URL, completion: @escaping (String?) -> Void) {
-        var identifier: String?
-        PHPhotoLibrary.shared().performChanges({
-            if let request = PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url) {
-                identifier = request.placeholderForCreatedAsset?.localIdentifier
-            }
-        }) { saved, error in
-            if let error {
-                print("영상 저장 오류: \(error.localizedDescription)")
-            }
-            DispatchQueue.global(qos: .background).async {
-                try? FileManager.default.removeItem(at: url)
-            }
-            completion(saved ? identifier : nil)
-        }
-    }
+
 }
 
 extension RecordingManager: AVCaptureVideoDataOutputSampleBufferDelegate {

@@ -78,16 +78,17 @@ final class RecordingViewModel: ObservableObject {
 
     /// 녹화를 종료합니다.
     func stopRecording() {
-        recordingManager.stopRecording { [weak self] identifier in
+        recordingManager.stopRecording { [weak self] path in
             guard let self else { return }
             Task { @MainActor in
                 self.isRecording = false
                 self.stopElapsedTimer()
-                if let id = identifier {
+                if let path {
+                    let url = URL(fileURLWithPath: path)
                     let session = ClimbingSessionModel(
                         id: UUID(),
-                        filename: "\(id).mov",
-                        filePath: id,
+                        filename: url.lastPathComponent,
+                        filePath: path,
                         date: Date(),
                         duration: self.elapsedTime
                     )
