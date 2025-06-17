@@ -1,5 +1,7 @@
 import SwiftUI
 import Foundation
+import AVFoundation
+import UIKit
 
 /// 저장된 세션 영상을 카드 형태로 나열하는 화면입니다.
 struct SessionListView: View {
@@ -29,18 +31,32 @@ struct SessionListView: View {
 
 private struct SessionCard: View {
     let session: ClimbingSessionModel
-    private let randomHeight: CGFloat = .random(in: 180...260)
+    private let thumbnail: UIImage?
+
+    init(session: ClimbingSessionModel) {
+        self.session = session
+        let url = URL(fileURLWithPath: session.filePath)
+        self.thumbnail = generateThumbnail(from: url)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Rectangle()
-                .fill(Color.gray.opacity(0.3))
-                .frame(height: randomHeight)
-                .overlay(
-                    Image(systemName: "video")
-                        .font(.system(size: 30))
+            if let thumbnail {
+                Image(uiImage: thumbnail)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 180)
+                    .clipped()
+            } else {
+                ZStack {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.3))
+                    Text("Preview unavailable")
+                        .font(.caption)
                         .foregroundColor(.white.opacity(0.8))
-                )
+                }
+                .frame(height: 180)
+            }
             Text(session.filename)
                 .font(.headline)
                 .foregroundColor(.white)
@@ -65,6 +81,21 @@ private struct SessionCard: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         return formatter.string(from: date)
+    }
+}
+
+/// 주어진 비디오 파일 URL에서 첫 프레임을 추출해 썸네일 이미지를 생성합니다.
+private func generateThumbnail(from url: URL) -> UIImage? {
+    let asset = AVAsset(url: url)
+    let generator = AVAssetImageGenerator(asset: asset)
+    generator.appliesPreferredTrackTransform = true
+    let time = CMTime(seconds: 0, preferredTimescale: 600)
+    do {
+        let cgImage = try generator.copyCGImage(at: time, actualTime: nil)
+        return UIImage(cgImage: cgImage)
+    } catch {
+        print("썸네일 생성 실패: \(error)")
+        return nil
     }
 }
 
