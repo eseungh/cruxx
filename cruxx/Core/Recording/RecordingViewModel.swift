@@ -1,6 +1,7 @@
 import Foundation
 import AVFoundation
 import UIKit
+import CoreData
 
 /// 녹화 상태와 액션을 관리하는 뷰모델입니다.
 @MainActor
@@ -11,12 +12,7 @@ final class RecordingViewModel: ObservableObject {
     private let recordingManager = RecordingManager()
     private var elapsedTimer: Timer?
     private var backgroundObserver: NSObjectProtocol?
-
-    struct ClimbingSession {
-        let filename: String
-        let date: Date
-        let fileURL: URL
-    }
+    private let context = PersistenceController.shared.viewContext
 
     init() {
         backgroundObserver = NotificationCenter.default.addObserver(
@@ -82,14 +78,22 @@ final class RecordingViewModel: ObservableObject {
 
     /// 녹화를 종료합니다.
     func stopRecording() {
-        recordingManager.stopRecording { [weak self] in
+        recordingManager.stopRecording { [weak self] identifier in
             guard let self else { return }
             Task { @MainActor in
                 self.isRecording = false
                 self.stopElapsedTimer()
-                let url = FileManager.default.temporaryDirectory.appendingPathComponent("cruxx_temp.mov")
-                let session = ClimbingSession(filename: url.lastPathComponent, date: Date(), fileURL: url)
-                print("Saved session: \(session)")
+                if let id = identifier {
+                    let session = ClimbingSession(
+                        id: UUID(),
+                        filename: "\(id).mov",
+                        filePath: id,
+                        date: Date(),
+                        duration: self.elapsedTime
+                    )
+                    self.insertSession(session)
+                    print("Saved session: \(session)")
+                }
                 self.showSaveMessage = true
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
@@ -97,6 +101,21 @@ final class RecordingViewModel: ObservableObject {
                     self?.showSaveMessage = false
                 }
             }
+        }
+    }
+
+    /// Core Data에 세션을 저장합니다.
+    private func insertSession(_ session: ClimbingSession) {
+        let entity = NSEntityDescription.insertNewObject(forEntityName: "ClimbingSession", into: context)
+        entity.setValue(session.id, forKey: "id")
+        entity.setValue(session.filename, forKey: "filename")
+        entity.setValue(session.filePath, forKey: "filePath")
+        entity.setValue(session.date, forKey: "date")
+        entity.setValue(session.duration, forKey: "duration")
+        do {
+            try context.save()
+        } catch {
+            print("세션 저장 실패: \(error)")
         }
     }
 }

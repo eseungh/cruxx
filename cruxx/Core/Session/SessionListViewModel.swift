@@ -1,33 +1,34 @@
 import Foundation
 import SwiftUI
+import CoreData
 
 /// 저장된 세션 목록을 관리하는 뷰모델입니다.
 @MainActor
 final class SessionListViewModel: ObservableObject {
-    /// 등반 세션 데이터 구조입니다.
-    struct ClimbingSession: Identifiable {
-        let id = UUID()
-        let filename: String
-        let date: Date
-        let fileURL: URL
-    }
-
     @Published private(set) var sessions: [ClimbingSession] = []
+    private let context = PersistenceController.shared.viewContext
 
     init() {
-        loadMockSessions()
+        loadSessions()
     }
 
-    /// 임시 목업 세션 데이터를 생성합니다.
-    private func loadMockSessions() {
-        let baseURL = FileManager.default.temporaryDirectory
-        sessions = (1...10).map { index in
-            let filename = "session_\(index).mov"
-            return ClimbingSession(
-                filename: filename,
-                date: Calendar.current.date(byAdding: .day, value: -index, to: Date()) ?? Date(),
-                fileURL: baseURL.appendingPathComponent(filename)
-            )
+    /// Core Data에서 세션 데이터를 불러옵니다.
+    func loadSessions() {
+        let request = NSFetchRequest<NSManagedObject>(entityName: "ClimbingSession")
+        do {
+            let result = try context.fetch(request)
+            sessions = result.compactMap { object in
+                guard
+                    let id = object.value(forKey: "id") as? UUID,
+                    let filename = object.value(forKey: "filename") as? String,
+                    let filePath = object.value(forKey: "filePath") as? String,
+                    let date = object.value(forKey: "date") as? Date
+                else { return nil }
+                let duration = object.value(forKey: "duration") as? Double
+                return ClimbingSession(id: id, filename: filename, filePath: filePath, date: date, duration: duration)
+            }
+        } catch {
+            print("세션 로드 실패: \(error)")
         }
     }
 }
