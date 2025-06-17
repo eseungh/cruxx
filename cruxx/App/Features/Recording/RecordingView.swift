@@ -9,6 +9,7 @@ struct RecordingView: View {
     @AppStorage("autoAnalyze") private var autoAnalyze = true
 
     @StateObject private var viewModel: RecordingViewModel
+
     @State private var blink = false
 
     init() {
@@ -135,6 +136,7 @@ struct RecordingView: View {
             viewModel.stopSession()
         }
     }
+
 
     private func timeString(from time: TimeInterval) -> String {
         let minutes = Int(time) / 60

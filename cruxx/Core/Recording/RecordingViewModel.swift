@@ -143,6 +143,10 @@ final class RecordingViewModel: ObservableObject {
                     self?.showSaveMessage = false
                 }
             }
+
+            if self.autoAnalyzeAfterRecording {
+                print("Auto analyze session")
+            }
         }
     }
 
