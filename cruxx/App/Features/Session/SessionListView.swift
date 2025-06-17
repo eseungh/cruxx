@@ -28,7 +28,7 @@ struct SessionListView: View {
 }
 
 private struct SessionCard: View {
-    let session: ClimbingSession
+    let session: ClimbingSessionModel
     private let randomHeight: CGFloat = .random(in: 180...260)
 
     var body: some View {

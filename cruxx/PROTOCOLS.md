@@ -23,7 +23,7 @@ import Foundation import UIKit // UIImage 필요시 import AVFoundation // CMSam
 
 **1. 세션 관리**
 
-protocol SessionManagerProtocol { func fetchSessions() -> [ClimbingSession] // 모든 세션 목록 조회 func saveSession(_ session: ClimbingSession) // 세션 저장 func deleteSession(_ session: ClimbingSession) // 세션 삭제 func updateSession(_ session: ClimbingSession) // 세션 수정 func fetchSession(by id: UUID) -> ClimbingSession? // 단일 세션 조회 }
+protocol SessionManagerProtocol { func fetchSessions() -> [ClimbingSessionModel] // 모든 세션 목록 조회 func saveSession(_ session: ClimbingSessionModel) // 세션 저장 func deleteSession(_ session: ClimbingSessionModel) // 세션 삭제 func updateSession(_ session: ClimbingSessionModel) // 세션 수정 func fetchSession(by id: UUID) -> ClimbingSessionModel? // 단일 세션 조회 }
 
 ---
 
@@ -53,7 +53,7 @@ protocol OnDevicePoseModelProtocol { func predictPoses(from pixelBuffer: CVPixel
 
 **6. 프리미엄 AI 분석/클러스터링**
 
-protocol PremiumAnalyzerProtocol { func analyzeAdvanced(session: ClimbingSession, completion: @escaping (AdvancedAnalysisResult) -> Void) }
+protocol PremiumAnalyzerProtocol { func analyzeAdvanced(session: ClimbingSessionModel, completion: @escaping (AdvancedAnalysisResult) -> Void) }
 
 protocol ClusteringModelProtocol { func clusterProblems(from problems: [ClimbingProblem]) -> [[ClimbingProblem]] }
 
@@ -61,11 +61,11 @@ protocol ClusteringModelProtocol { func clusterProblems(from problems: [Climbing
 
 **7. 데이터 소스/저장소**
 
-protocol LocalDataSourceProtocol { func save(_ session: ClimbingSession) func loadAllSessions() -> [ClimbingSession] func delete(_ session: ClimbingSession) }
+protocol LocalDataSourceProtocol { func save(_ session: ClimbingSessionModel) func loadAllSessions() -> [ClimbingSessionModel] func delete(_ session: ClimbingSessionModel) }
 
-protocol RemoteDataSourceProtocol { func upload(_ session: ClimbingSession, completion: @escaping (Bool) -> Void) func fetchSessions(completion: @escaping ([ClimbingSession]) -> Void) }
+protocol RemoteDataSourceProtocol { func upload(_ session: ClimbingSessionModel, completion: @escaping (Bool) -> Void) func fetchSessions(completion: @escaping ([ClimbingSessionModel]) -> Void) }
 
-protocol SessionRepositoryProtocol { func getSessions() -> [ClimbingSession] func addSession(_ session: ClimbingSession) func removeSession(_ session: ClimbingSession) func updateSession(_ session: ClimbingSession) }
+protocol SessionRepositoryProtocol { func getSessions() -> [ClimbingSessionModel] func addSession(_ session: ClimbingSessionModel) func removeSession(_ session: ClimbingSessionModel) func updateSession(_ session: ClimbingSessionModel) }
 
 ---
 
@@ -83,7 +83,7 @@ protocol Injectable { associatedtype Dependency init(container: Dependency) }
 
 **🔖 추가 참고**
 
-- 각 프로토콜에 등장하는 타입(ClimbingSession, Pose, PoseAnalysisResult 등)은반드시 Sources/CRUXX/Core/Model/ 이하에 정의
+- 각 프로토콜에 등장하는 타입(ClimbingSessionModel, Pose, PoseAnalysisResult 등)은반드시 Sources/CRUXX/Core/Model/ 이하에 정의
 - 필요한 프로토콜은 기능별로 분리하거나, Core/Protocols/Protocols.swift에 통합 가능
 - 구현 클래스/구조체는 STRUCTURE.md 기준 폴더에 생성,프로토콜 인터페이스를 반드시 구현해야 함
 

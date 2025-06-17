@@ -70,7 +70,7 @@ Utils/Constants.swift
 
 [cruxx/Model] – 공통 데이터 모델 정의
 
-ClimbingSession.swift
+ClimbingSessionModel.swift
 → 등반 세션 구조
 
 SessionDTO.swift

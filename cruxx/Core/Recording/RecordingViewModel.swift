@@ -84,7 +84,7 @@ final class RecordingViewModel: ObservableObject {
                 self.isRecording = false
                 self.stopElapsedTimer()
                 if let id = identifier {
-                    let session = ClimbingSession(
+                    let session = ClimbingSessionModel(
                         id: UUID(),
                         filename: "\(id).mov",
                         filePath: id,
@@ -105,7 +105,7 @@ final class RecordingViewModel: ObservableObject {
     }
 
     /// Core Data에 세션을 저장합니다.
-    private func insertSession(_ session: ClimbingSession) {
+    private func insertSession(_ session: ClimbingSessionModel) {
         let entity = NSEntityDescription.insertNewObject(forEntityName: "ClimbingSession", into: context)
         entity.setValue(session.id, forKey: "id")
         entity.setValue(session.filename, forKey: "filename")
