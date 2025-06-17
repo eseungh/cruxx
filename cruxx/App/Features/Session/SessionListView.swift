@@ -97,26 +97,36 @@ private struct SessionCard: View {
 }
 
 /// 주어진 비디오 파일 URL에서 첫 프레임을 추출해 썸네일 이미지를 생성합니다.
-private func generateThumbnail(from url: URL) -> UIImage? {
-    let asset = AVAsset(url: url)
-    let generator = AVAssetImageGenerator(asset: asset)
-    generator.appliesPreferredTrackTransform = true
-    let time = CMTime(seconds: 0, preferredTimescale: 600)
-    do {
-        let cgImage = try generator.copyCGImage(at: time, actualTime: nil)
-        return UIImage(cgImage: cgImage)
-    } catch {
-        print("썸네일 생성 실패: \(error)")
-        return nil
-    }
-}
-
-/// 비동기적으로 썸네일을 생성합니다.
 private func generateThumbnailAsync(from url: URL, completion: @escaping (UIImage?) -> Void) {
     DispatchQueue.global(qos: .userInitiated).async {
-        let image = generateThumbnail(from: url)
-        DispatchQueue.main.async {
-            completion(image)
+        let asset = AVURLAsset(url: url)
+        let generator = AVAssetImageGenerator(asset: asset)
+        generator.appliesPreferredTrackTransform = true
+        let time = CMTime(seconds: 0, preferredTimescale: 600)
+
+        if #available(iOS 18.0, *) {
+            generator.generateCGImageAsynchronously(for: time) { imageRef, _, error in
+                DispatchQueue.main.async {
+                    if let imageRef = imageRef {
+                        completion(UIImage(cgImage: imageRef))
+                    } else {
+                        print("썸네일 실패 (async): \(error?.localizedDescription ?? "-")")
+                        completion(nil)
+                    }
+                }
+            }
+        } else {
+            do {
+                let imageRef = try generator.copyCGImage(at: time, actualTime: nil)
+                DispatchQueue.main.async {
+                    completion(UIImage(cgImage: imageRef))
+                }
+            } catch {
+                print("썸네일 실패 (sync): \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    completion(nil)
+                }
+            }
         }
     }
 }

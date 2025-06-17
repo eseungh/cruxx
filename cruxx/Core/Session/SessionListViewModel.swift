@@ -16,8 +16,11 @@ final class SessionListViewModel: ObservableObject {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.loadSessions()
-        }
+            guard let self else { return }
+                Task { @MainActor in
+                    self.loadSessions()
+                }
+            }
     }
 
     deinit {
