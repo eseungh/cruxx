@@ -3,6 +3,7 @@ import AVFoundation
 
 /// 라이브 카메라 프리뷰와 녹화 버튼을 제공하는 화면입니다.
 struct RecordingView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = RecordingViewModel()
     @State private var countdown: Int?
     @State private var countdownTimer: Timer?
@@ -66,6 +67,20 @@ struct RecordingView: View {
                 .disabled(countdown != nil)
                 .padding(.bottom, 40)
             }
+        }
+        .overlay(alignment: .topLeading) {
+            Button(action: {
+                dismiss()
+            }) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(.white)
+                    .padding(8)
+                    .background(Color.black.opacity(0.6))
+                    .clipShape(Circle())
+            }
+            .padding(.top, 60)
+            .padding(.leading, 16)
         }
         .onAppear {
             viewModel.startSession()
