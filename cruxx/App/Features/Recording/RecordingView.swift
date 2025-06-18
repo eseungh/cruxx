@@ -12,7 +12,11 @@ struct RecordingView: View {
 
     @State private var blink = false
 
-    init() {
+    init(
+        includeMic: Bool = true,
+        countdownSeconds: Int = 3,
+        autoAnalyze: Bool = true
+    ) {
         _viewModel = StateObject(wrappedValue: RecordingViewModel(
             includeMic: includeMic,
             countdownSeconds: countdownSeconds,
@@ -146,5 +150,5 @@ struct RecordingView: View {
 }
 
 #Preview {
-    RecordingView()
+    RecordingView(includeMic: true, countdownSeconds: 3, autoAnalyze: true)
 }
