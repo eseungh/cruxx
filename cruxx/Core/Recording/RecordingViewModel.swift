@@ -13,7 +13,7 @@ final class RecordingViewModel: ObservableObject {
 
     private let includeMic: Bool
     private let countdownSeconds: Int
-    private let autoAnalyze: Bool
+    private let autoAnalyzeAfterRecording: Bool
 
     private let recordingManager: RecordingManager
     private var elapsedTimer: Timer?
@@ -24,7 +24,7 @@ final class RecordingViewModel: ObservableObject {
     init(includeMic: Bool, countdownSeconds: Int, autoAnalyze: Bool) {
         self.includeMic = includeMic
         self.countdownSeconds = countdownSeconds
-        self.autoAnalyze = autoAnalyze
+        self.autoAnalyzeAfterRecording = autoAnalyze
         self.recordingManager = RecordingManager(includeMic: includeMic)
 
         backgroundObserver = NotificationCenter.default.addObserver(
@@ -132,7 +132,7 @@ final class RecordingViewModel: ObservableObject {
                     )
                     self.insertSession(session)
                     print("Saved session: \(session)")
-                    if self.autoAnalyze {
+                    if self.autoAnalyzeAfterRecording {
                         self.runAutoAnalyze(url: url)
                     }
                 }
