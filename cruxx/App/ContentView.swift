@@ -9,6 +9,9 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var showRecordingView = false
+    @AppStorage("includeMic") private var includeMic = true
+    @AppStorage("countdownSeconds") private var countdownSeconds = 3
+    @AppStorage("autoAnalyze") private var autoAnalyze = true
 
     init() {
         UITabBar.appearance().backgroundColor = .clear
@@ -48,7 +51,11 @@ struct ContentView: View {
                 }
             }
             .fullScreenCover(isPresented: $showRecordingView) {
-                RecordingView()
+                RecordingView(
+                    includeMic: includeMic,
+                    countdownSeconds: countdownSeconds,
+                    autoAnalyze: autoAnalyze
+                )
             }
             .padding(.bottom, 24)
             .background(
