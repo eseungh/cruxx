@@ -79,10 +79,10 @@ private struct SessionCard: View {
             .padding(12)
             .background(
                 .ultraThinMaterial,
-                in: RoundedRectangle(cornerRadius: 20)
+                in: Rectangle()
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                Rectangle()
                     .stroke(Color.white.opacity(0.15), lineWidth: 1)
             )
             .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
@@ -96,7 +96,7 @@ private struct SessionCard: View {
                     .foregroundColor(.white)
                     .padding(8)
                     .background(Color.black.opacity(0.5))
-                        .clipShape(Circle())
+                        .clipShape(Rectangle())
                 }
                 .opacity(isDeleteVisible ? 1 : 0)
                 .animation(.easeInOut, value: isDeleteVisible)

@@ -32,7 +32,7 @@ struct RecordingView: View {
             VStack {
                 if viewModel.isRecording {
                     HStack(spacing: 6) {
-                        Circle()
+                        Rectangle()
                             .fill(Color.red)
                             .frame(width: 12, height: 12)
                             .opacity(blink ? 0.2 : 1)
@@ -47,10 +47,10 @@ struct RecordingView: View {
                     .padding(.vertical, 8)
                     .background(
                         .ultraThinMaterial,
-                        in: RoundedRectangle(cornerRadius: 12)
+                        in: Rectangle()
                     )
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        Rectangle()
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
                     .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
@@ -67,10 +67,10 @@ struct RecordingView: View {
                         .padding(.vertical, 8)
                         .background(
                             .ultraThinMaterial,
-                            in: RoundedRectangle(cornerRadius: 12)
+                            in: Rectangle()
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            Rectangle()
                                 .stroke(Color.white.opacity(0.15), lineWidth: 1)
                         )
                         .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
@@ -85,11 +85,11 @@ struct RecordingView: View {
                         viewModel.startRecording()
                     }
                 }) {
-                    Circle()
+                    Rectangle()
                         .fill(viewModel.isRecording ? Color.gray : Color.red)
                         .frame(width: 80, height: 80)
                         .overlay(
-                            Circle()
+                            Rectangle()
                                 .stroke(Color.white.opacity(0.15), lineWidth: 1)
                         )
                         .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
@@ -104,9 +104,9 @@ struct RecordingView: View {
                     .font(.system(size: 60, weight: .bold))
                     .foregroundColor(.white)
                     .padding(40)
-                    .background(.ultraThinMaterial, in: Circle())
+                    .background(.ultraThinMaterial, in: Rectangle())
                     .overlay(
-                        Circle()
+                        Rectangle()
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
                     .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
@@ -122,10 +122,10 @@ struct RecordingView: View {
                     .padding(8)
                     .background(
                         .ultraThinMaterial,
-                        in: Circle()
+                        in: Rectangle()
                     )
                     .overlay(
-                        Circle()
+                        Rectangle()
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
                     .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
