@@ -38,8 +38,8 @@ struct SettingsView: View {
         }
         .foregroundColor(.white.opacity(0.8))
         .padding(16)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.15)))
+        .background(.ultraThinMaterial, in: Rectangle())
+        .overlay(Rectangle().stroke(Color.white.opacity(0.15)))
         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 4)
     }
 
@@ -56,8 +56,8 @@ struct SettingsView: View {
         }
         .foregroundColor(.white.opacity(0.8))
         .padding(16)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.15)))
+        .background(.ultraThinMaterial, in: Rectangle())
+        .overlay(Rectangle().stroke(Color.white.opacity(0.15)))
         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 4)
     }
 
@@ -73,8 +73,8 @@ struct SettingsView: View {
         }
         .foregroundColor(.white.opacity(0.8))
         .padding(16)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 20))
-        .overlay(RoundedRectangle(cornerRadius: 20).stroke(Color.white.opacity(0.15)))
+        .background(.ultraThinMaterial, in: Rectangle())
+        .overlay(Rectangle().stroke(Color.white.opacity(0.15)))
         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 4)
     }
 

@@ -29,17 +29,17 @@ struct SessionDetailView: View {
                         .padding(8)
                         .background(
                             .ultraThinMaterial,
-                            in: Circle()
+                            in: Rectangle()
                         )
                         .overlay(
-                            Circle()
+                            Rectangle()
                                 .stroke(Color.white.opacity(0.15), lineWidth: 1)
                         )
                         .shadow(color: .black.opacity(0.25), radius: 10, x: 0, y: 4)
                 }
                 .padding()
             }
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(Rectangle())
             .padding(.top)
 
             VStack(alignment: .leading, spacing: 6) {
@@ -59,10 +59,10 @@ struct SessionDetailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 .ultraThinMaterial,
-                in: RoundedRectangle(cornerRadius: 20)
+                in: Rectangle()
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 20)
+                Rectangle()
                     .stroke(Color.white.opacity(0.15), lineWidth: 1)
             )
             .padding(.horizontal)

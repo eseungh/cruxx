@@ -60,7 +60,7 @@ struct ContentView: View {
             .padding(.bottom, 24)
             .background(
                 .ultraThinMaterial,
-                in: RoundedRectangle(cornerRadius: 25)
+                in: Rectangle()
             )
             .shadow(color: .black.opacity(0.15), radius: 15, x: 0, y: 10)
         }
