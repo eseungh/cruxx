@@ -7,6 +7,7 @@ import CoreData
 /// 저장된 세션 영상을 카드 형태로 나열하는 화면입니다.
 struct SessionListView: View {
     @StateObject private var viewModel = SessionListViewModel()
+    @State private var showPicker = false
     private let columns = [
         GridItem(.flexible(), spacing: 16),
         GridItem(.flexible())
@@ -30,6 +31,20 @@ struct SessionListView: View {
                 }
             }
             .navigationTitle("Sessions")
+            .sheet(isPresented: $showPicker) {
+                VideoPickerView { url in
+                    viewModel.importVideo(from: url)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showPicker = true
+                    } label: {
+                        Image(systemName: "square.and.arrow.down")
+                    }
+                }
+            }
         }
     }
 }
