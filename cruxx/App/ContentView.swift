@@ -19,23 +19,13 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            Image("background")
-                .resizable()
-                .scaledToFill()
-                .ignoresSafeArea()
+            Color.white
+                .ignoresSafeArea(edges: .all)
 
             TabView {
-                VStack {
-                    Spacer()
-                    Button("Start Recording") {
-                        showRecordingView = true
-                    }
-                    .font(.title2)
-                    .padding()
-                    Spacer()
-                }
-                .tabItem {
-                    Label("Home", systemImage: "house")
+                HomeView(showRecordingView: $showRecordingView)
+                    .tabItem {
+                        Label("Home", systemImage: "house")
                 }
 
                 SessionListView()
@@ -57,12 +47,6 @@ struct ContentView: View {
                     autoAnalyze: autoAnalyze
                 )
             }
-            .padding(.bottom, 24)
-            .background(
-                .ultraThinMaterial,
-                in: Rectangle()
-            )
-            .shadow(color: .black.opacity(0.15), radius: 15, x: 0, y: 10)
         }
     }
 }

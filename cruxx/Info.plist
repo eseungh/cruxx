@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>ZillaSlab-Bold.ttf</string>
+		<string>ZillaSlab-BoldItalic.ttf</string>
+		<string>ZillaSlab-Medium.ttf</string>
+		<string>ZillaSlab-MediumItalic.ttf</string>
+		<string>ZillaSlab-Regular.ttf</string>
+		<string>ZillaSlab-SemiBold.ttf</string>
+		<string>ZillaSlab-SemiBoldItalic.ttf</string>
+		<string>ZillaSlab-LightItalic.ttf</string>
+		<string>ZillaSlab-Light.ttf</string>
+		<string>ZillaSlab-Italic.ttf</string>
+		<string>BookkMyungjo_Bold.ttf</string>
+		<string>BookkMyungjo_Light.ttf</string>
+	</array>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIImageName</key>
+		<string>splashImage</string>
+		<key>UIImageScaling</key>
+		<string>AspectFit</string>
+	</dict>
+</dict>
+</plist>

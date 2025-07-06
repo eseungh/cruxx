@@ -15,9 +15,22 @@
 		31A5963C2E01BD2A00D67ACB /* cruxx.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = cruxx.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		31F6E39A2E12ACF50008AE12 /* Exceptions for "cruxx" folder in "cruxx" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 319663572E0183B400D79721 /* cruxx */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		3196635A2E0183B400D79721 /* cruxx */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				31F6E39A2E12ACF50008AE12 /* Exceptions for "cruxx" folder in "cruxx" target */,
+			);
 			path = cruxx;
 			sourceTree = "<group>";
 		};
@@ -260,6 +273,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = cruxx/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "실내 클라이밍 세션을 촬영하기 위해 카메라 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "세션 영상에 음성을 함께 녹음하기 위해 마이크 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "클라이밍 세션 영상을 사진 앱에 저장하기 위해 접근 권한이 필요합니다.";
@@ -304,6 +318,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = cruxx/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "실내 클라이밍 세션을 촬영하기 위해 카메라 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "세션 영상에 음성을 함께 녹음하기 위해 마이크 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "클라이밍 세션 영상을 사진 앱에 저장하기 위해 접근 권한이 필요합니다.";
